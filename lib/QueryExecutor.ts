@@ -12,8 +12,12 @@ export class QueryExecutor {
   }
 
   public async runQuery(queryString: string, tpfSourceIRI: string) : Promise<void> {
-    const result = await this.myEngine.query(queryString, { sources: [tpfSourceIRI] });
-    result.bindingsStream.on('data', (data: any) => console.log(data.toObject()));
+    return new Promise(async (resolve, reject) => {
+      const result = await this.myEngine.query(queryString, { sources: [tpfSourceIRI] }).then();
+      result.bindingsStream.on('data', (data: any) =>  console.log(data.toObject()));
+      await result.bindingsStream.on('end', async () => {
+        resolve();
+      });
+    });
   }
-
 }
