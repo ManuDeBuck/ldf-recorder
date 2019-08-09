@@ -1,52 +1,79 @@
 #!/usr/bin/env node
-// import minimist = require("minimist");
+import minimist = require("minimist");
 import { QueryExecutor } from "../lib/QueryExecutor";
 import { ClientRequest, IncomingMessage } from "http";
-import { runInNewContext } from "vm";
-import { join } from "path";
-import { Readable } from "stream";
-import { Socket } from "net";
-import { AssertionError } from "assert";
-import { HttpInterceptor } from "../lib/HttpInterceptor";
+import { HttpInterceptor, IInterceptOptions, IInterceptorConfig } from "../lib/HttpInterceptor";
+import { Util } from "../lib/Util";
 
 const http = require('http');
+const fs = require('fs');
 
-// const args = minimist(process.argv.slice(2));
+const usageMessage = `tpf-recorder records all http-requests and responses for a specific SPARQL query.
+tpf-recorder is based on the comunica SPARQL query engine.
 
-const originalRequest = http.request;
+Usage:
+  tpf-recorder source 'QUERY'
+  tpf-recorder source1 source2 'QUERY'
+  tpf-recorder source 'QUERY' -d ./path/to/folder
 
-export interface RequestOption {
-  headers: Object;
-  method: string;
-  path: string;
-  port: number;
-  protocol: string;
-  hostname: string;
+Options: 
+  -d    Change the directory where the outputfiles should be stored. Default is ./tests/`;
+
+const args = minimist(process.argv.slice(2));
+
+if(args._.length < 2) {
+  console.error(usageMessage);
+  process.exit(1);
 }
 
-const requestOptions : any[] = [];
-
+// Overwrite request method to intercept the requests
+const originalRequest = http.request;
 http.request = function wrapRequest(options: any) : ClientRequest {
-  requestOptions.push({
+  interceptOptions.push({
     headers: options.headers,
-    method: options.method, 
+    method: options.method || 'GET', 
     path: options.path,
-    port: options.port, 
-    protocol: options.protocol,
+    port: options.port || 80, 
+    protocol: options.protocol || 'http:',
     hostname: options.hostname
   });
-  // requestOptions.push(options);
+  subQueryPaths.push(options.path);
   return originalRequest.apply(options, arguments);
 }
 
-async function intercept() : Promise<void> {
-  const v = new QueryExecutor();
-  v.runQuery('SELECT * WHERE { ?s ?p <http://dbpedia.org/resource/Belgium>. ?s ?p ?o } LIMIT 5', 'http://fragments.dbpedia.org/2015/en').then(() => {
-    http.request = originalRequest;
-    new HttpInterceptor(requestOptions[0]).interceptResponse().then(() => {
-      console.log("succes!")
-    });
-  });
+// The configuration used for the interceptor
+const interceptorConfig: IInterceptorConfig = {
+  defaultDirectory: args.d ? true : false,
+  directory: args.d ? Util.makePath(args.d) : 'tests/'
+} // TODO: Test this
+
+// Check if directory exists
+if(! fs.existsSync(interceptorConfig.directory)){
+  fs.mkdirSync(interceptorConfig.directory);
 }
 
-intercept(); 
+// Fetch the QUERY
+const query: string = args._.pop();
+// TODO: Maybe do some testing for legitimate queries
+
+// Fetch the data sources given
+const dataSources: string[] = [];
+while(args._.length){
+  dataSources.push(args._.pop());
+}
+
+// Every request's options will be stored in interceptOptions
+const interceptOptions: IInterceptOptions[] = [];
+const subQueryPaths: string[] = [];
+const queryExecutor: QueryExecutor  = new QueryExecutor();
+queryExecutor.runQuery(query, dataSources).then(async () => {
+  // undo overwriting of http.request
+  http.request = originalRequest;
+  const interceptor: HttpInterceptor = new HttpInterceptor(interceptorConfig);
+  for(let i = 0; i < interceptOptions.length; i += 1){
+    let interceptOption: IInterceptOptions = interceptOptions[i];
+    let subQueryPath: string = subQueryPaths[i];
+    // For every intercepted request we should 'mock' the response
+    await interceptor.interceptResponse(interceptOption, subQueryPath);
+  }
+});

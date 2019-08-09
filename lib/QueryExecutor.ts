@@ -1,20 +1,22 @@
-import { newEngine, ActorInitSparql } from "@comunica/actor-init-sparql";
+import { newEngine } from "@comunica/actor-init-sparql";
 
 /**
- * A class which executes SPARQL-queries on a TPF endpoint.
+ * A class which executes SPARQL-queries on a TPF endpoint, which can be recorded
  */
 export class QueryExecutor {
 
   public readonly myEngine: any; // TODO: Check why type can't be ActorInitSparql...
- 
-  constructor(){
+
+  constructor() {
     this.myEngine = newEngine();
   }
 
-  public async runQuery(queryString: string, tpfSourceIRI: string) : Promise<void> {
+  public async runQuery(queryString: string, tpfSources: string[]): Promise<void> {
     return new Promise(async (resolve, reject) => {
-      const result = await this.myEngine.query(queryString, { sources: [tpfSourceIRI] }).then();
-      result.bindingsStream.on('data', (data: any) =>  console.log(data.toObject()));
+      const result = await this.myEngine.query(queryString, { sources: tpfSources }).then();
+      await result.bindingsStream.on('data', (data: any) => {
+        // do nothing
+      });
       await result.bindingsStream.on('end', async () => {
         resolve();
       });
