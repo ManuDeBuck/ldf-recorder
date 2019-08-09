@@ -1,0 +1,68 @@
+{
+  "name": "tpf-recorder",
+  "version": "1.0.0",
+  "description": "A tool for recording all HTTP- requests and responses when querying a TPF server",
+  "main": "index.js",
+  "repository": "https://github.com/ManuDeBuck/tpf-recorder.git",
+  "author": "Manu De Buck <manu.debuck@telenet.be>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ManuDeBuck/tpf-recorder/issues"
+  },
+  "homepage": "https://github.com/ManuDeBuck/tpf-recorders#readme",
+  "contributors": [],
+  "bin": {
+    "tpf-recorder": "bin/Runner.js"
+  },
+  "files": [
+    "bin/**/*.d.ts",
+    "bin/**/*.js",
+    "lib/**/*.d.ts",
+    "lib/**/*.js",
+    "lib/**/*.json",
+    "index.d.ts",
+    "index.js"
+  ],
+  "pre-commit": [
+    "build",
+    "lint",
+    "test"
+  ],
+  "jest": {
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "test/tsconfig.json"
+      }
+    },
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"
+    ],
+    "testRegex": "(/test/.*|(\\.|/)(test|spec))\\.ts$",
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "collectCoverage": true,
+    "testEnvironment": "node"
+  },
+  "scripts": {
+    "test": "jest ${1}",
+    "test-watch": "jest ${1} --watch",
+    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls",
+    "lint": "tslint index.ts lib/**/*.ts test/**/*.ts --exclude '**/*.d.ts'",
+    "build": "tsc",
+    "validate": "npm ls",
+    "prepare": "npm run build",
+    "version": "manual-git-changelog onversion"
+  },
+  "dependencies": {
+    "@comunica/actor-init-sparql": "^1.9.1",
+    "@types/minimist": "^1.2.0",
+    "@types/n3": "^1.1.0",
+    "@types/node": "^12.7.1",
+    "minimist": "^1.2.0"
+  }
+}
