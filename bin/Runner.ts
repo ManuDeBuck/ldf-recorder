@@ -4,6 +4,7 @@ import { QueryExecutor } from "../lib/QueryExecutor";
 import { ClientRequest, IncomingMessage } from "http";
 import { HttpInterceptor, IInterceptOptions, IInterceptorConfig } from "../lib/HttpInterceptor";
 import { Util } from "../lib/Util";
+import { runInNewContext } from "vm";
 
 const http = require('http');
 const fs = require('fs');
