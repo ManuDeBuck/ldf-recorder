@@ -35,9 +35,9 @@ http.request = function wrapRequest(options: any) : ClientRequest {
     path: options.path,
     port: options.port || 80, 
     protocol: options.protocol || 'http:',
-    hostname: options.hostname
+    hostname: options.hostname,
+    query: options.query,
   });
-  subQueryPaths.push(options.path);
   return originalRequest.apply(options, arguments);
 }
 
@@ -64,16 +64,13 @@ while(args._.length){
 
 // Every request's options will be stored in interceptOptions
 const interceptOptions: IInterceptOptions[] = [];
-const subQueryPaths: string[] = [];
 const queryExecutor: QueryExecutor  = new QueryExecutor();
 queryExecutor.runQuery(query, dataSources).then(async () => {
   // undo overwriting of http.request
   http.request = originalRequest;
   const interceptor: HttpInterceptor = new HttpInterceptor(interceptorConfig);
-  for(let i = 0; i < interceptOptions.length; i += 1){
-    let interceptOption: IInterceptOptions = interceptOptions[i];
-    let subQueryPath: string = subQueryPaths[i];
+  for(let interceptOption of interceptOptions){
     // For every intercepted request we should 'mock' the response
-    await interceptor.interceptResponse(interceptOption, subQueryPath);
+    await interceptor.interceptResponse(interceptOption);
   }
 });
