@@ -1,4 +1,5 @@
 import { newEngine } from "@comunica/actor-init-sparql";
+import { Bindings } from "@comunica/bus-query-operation";
 
 /**
  * A class which executes SPARQL-queries on a TPF endpoint, which can be recorded
@@ -11,14 +12,15 @@ export class QueryExecutor {
     this.myEngine = newEngine();
   }
 
-  public async runQuery(queryString: string, tpfSources: string[]): Promise<void> {
+  public async runQuery(queryString: string, tpfSources: string[]): Promise<Bindings[]> {
     return new Promise(async (resolve, reject) => {
-      const result = await this.myEngine.query(queryString, { sources: tpfSources }).then();
-      await result.bindingsStream.on('data', (data: any) => {
-        // do nothing
+      const results: Bindings[] = [];
+      const result = await this.myEngine.query(queryString, { sources: tpfSources });
+      await result.bindingsStream.on('data', (data: Bindings) => {
+        results.push(data);
       });
       await result.bindingsStream.on('end', async () => {
-        resolve();
+        resolve(results);
       });
     });
   }

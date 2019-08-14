@@ -2,9 +2,10 @@
 import minimist = require("minimist");
 import { QueryExecutor } from "../lib/QueryExecutor";
 import { ClientRequest, IncomingMessage } from "http";
-import { HttpInterceptor, IInterceptOptions, IInterceptorConfig } from "../lib/HttpInterceptor";
+import { HttpInterceptor, IInterceptOptions, IWriteConfig } from "../lib/HttpInterceptor";
 import { Util } from "../lib/Util";
-import { runInNewContext } from "vm";
+import { ResultWriter } from "../lib/ResultWriter";
+import { Bindings } from "@comunica/bus-query-operation";
 
 const http = require('http');
 const fs = require('fs');
@@ -43,14 +44,14 @@ http.request = function wrapRequest(options: any) : ClientRequest {
 }
 
 // The configuration used for the interceptor
-const interceptorConfig: IInterceptorConfig = {
+const writeConfig: IWriteConfig = {
   defaultDirectory: args.d ? true : false,
   directory: args.d ? Util.makePath(args.d) : 'tests/'
 } // TODO: Test this
 
 // Check if directory exists
-if(! fs.existsSync(interceptorConfig.directory)){
-  fs.mkdirSync(interceptorConfig.directory);
+if(! fs.existsSync(writeConfig.directory)){
+  fs.mkdirSync(writeConfig.directory);
 }
 
 // Fetch the QUERY
@@ -66,10 +67,12 @@ while(args._.length){
 // Every request's options will be stored in interceptOptions
 const interceptOptions: IInterceptOptions[] = [];
 const queryExecutor: QueryExecutor  = new QueryExecutor();
-queryExecutor.runQuery(query, dataSources).then(async () => {
+queryExecutor.runQuery(query, dataSources).then(async (results: Bindings[]) => {
+  const resultWriter: ResultWriter = new ResultWriter(writeConfig);
+  resultWriter.writeResultsToFile(results);
   // undo overwriting of http.request
   http.request = originalRequest;
-  const interceptor: HttpInterceptor = new HttpInterceptor(interceptorConfig);
+  const interceptor: HttpInterceptor = new HttpInterceptor(writeConfig);
   for(let interceptOption of interceptOptions){
     // For every intercepted request we should 'mock' the response
     await interceptor.interceptResponse(interceptOption);

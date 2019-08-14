@@ -10,9 +10,9 @@ const crypto = require('crypto');
  */
 export class HttpInterceptor {
 
-  private readonly interceptorConfig: IInterceptorConfig;
+  private readonly interceptorConfig: IWriteConfig;
 
-  constructor(interceptorConfig: IInterceptorConfig) {
+  constructor(interceptorConfig: IWriteConfig) {
     this.interceptorConfig = interceptorConfig;
   }
 
@@ -23,6 +23,7 @@ export class HttpInterceptor {
       let body = '';
       res.on('response', (incoming: IncomingMessage) => {
         incoming.setEncoding('utf8');
+        const headers: http.IncomingHttpHeaders = incoming.headers;
         incoming.on('data', (chunk: any) => {
           if (typeof chunk !== 'string') {
             throw new Error(`Chunk must be of type string, not of type: ${typeof chunk}`);
@@ -30,10 +31,12 @@ export class HttpInterceptor {
           body += chunk;
         });
         incoming.on('end', async () => {
+          const requistIri = interceptOptions.protocol + '//' + interceptOptions.hostname + interceptOptions.path;
           const filename = crypto.createHash('sha1')
-                          .update(interceptOptions.path)
+                          .update(requistIri)
                           .digest('hex');
-          this.writeToFile(body, filename, interceptOptions);
+          this.writeToFile(body, filename, interceptOptions, headers, requistIri);
+          // TODO: Maybe put requistiri in an interface?
           resolve();
         });
       });
@@ -42,8 +45,9 @@ export class HttpInterceptor {
   }
 
   /* istanbul ignore next */
-  private writeToFile(body: string, responseFileName: string, options: IInterceptOptions): void {
-    body = this.getHeaderLines(options) + body;
+  private writeToFile(body: string, responseFileName: string, options: IInterceptOptions,
+                      headers: http.IncomingHttpHeaders, requistIRI: string): void {
+    body = this.getHeaderLines(options, headers, requistIRI) + body;
     fs.writeFile(`${this.interceptorConfig.directory}${responseFileName}.ttl`, body, (err: any) => {
       if (err) {
         throw new Error(`in writeToFile: could not write TPF-query results to file: ${responseFileName}`);
@@ -56,10 +60,11 @@ export class HttpInterceptor {
    * Returns a header for each query-response file so that we still have some information about it
    * @param options The options for the headers
    */
-  private getHeaderLines(options: IInterceptOptions): string {
+  private getHeaderLines(options: IInterceptOptions, headers: http.IncomingHttpHeaders, filename: string): string {
     /* istanbul ignore next line */
     return `# Query: ${options.query}
-# Hashed path: ${options.path}
+# Hashed IRI: ${filename}
+# Content-type: ${headers["content-type"]}
 `;
   }
 
@@ -75,7 +80,7 @@ export interface IInterceptOptions {
   query: string;
 }
 
-export interface IInterceptorConfig {
+export interface IWriteConfig {
   defaultDirectory: boolean;
   directory: string;
 }

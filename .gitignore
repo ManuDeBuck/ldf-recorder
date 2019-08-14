@@ -15,3 +15,5 @@ yarn-error.log
 **/index.js.map
 **/index.d.ts
 coverage
+tests
+test/tmpfolder
