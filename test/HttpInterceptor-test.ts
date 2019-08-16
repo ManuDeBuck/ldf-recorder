@@ -4,6 +4,7 @@ const nock = require('nock');
 const fs = require('fs');
 const fse = require('fs-extra');
 const crypto = require('crypto');
+const path = require('path');
 
 describe('HttpInterceptor', () => {
 
@@ -20,29 +21,71 @@ describe('HttpInterceptor', () => {
 
   describe('#interceptResponse', () => {
 
-    nock('http://ex.org').get('/path/').reply(200,
+    const ct: string = 'application/trig;charset=utf-8';
+    const fn: string = 'http://ex.org/path/';
+
+    it('should have created a new file with a hash and content', () => {
+
+      nock('http://ex.org')
+      .defaultReplyHeaders({
+        'Content-Type': ct,
+      }).get('/path/').reply(200,
 `@prefix : <http://ex.org/ex#>
 :_ a :test`);
 
-    it('Should have created a new file with a hash and content', () => {
       interceptor.interceptResponse({
         headers: "", method: "GET", path: "/path/", port: undefined, protocol: "http:", hostname: "ex.org", query: "",
       }).then(() => {
         fs.readdir(jestTestFolder, (error, files) => {
           const amount: number = files.length;
           const filename: string = crypto.createHash('sha1')
-                          .update('/path/')
+                          .update(fn)
                           .digest('hex') + '.ttl';
           const fileContent: string = fs.readFileSync(jestTestFolder + filename, 'utf8');
+          expect(path.extname(files[0])).toEqual('.ttl');
           expect(files[0]).toEqual(filename);
           expect(amount > 0).toBeTruthy();
           expect(fileContent.startsWith(`# Query: ${""}
-# Hashed path: ${"/path/"}`)).toBeTruthy();
-          fse.removeSync(jestTestFolder);
+# Hashed IRI: ${fn}
+# Content-type: ${ct}`)).toBeTruthy();
         });
       });
     });
 
+    it('should resolve', () => {
+
+      nock('http://ex.org')
+      .defaultReplyHeaders({
+        'Content-Type': ct,
+      }).get('/path/').reply(200,
+`@prefix : <http://ex.org/ex#>
+:_ a :test`);
+
+      return expect(interceptor.interceptResponse({
+        headers: "", method: "GET", path: "/path/", port: undefined, protocol: "http:", hostname: "ex.org", query: "",
+      })).resolves.toBeUndefined();
+
+    });
+
+    it('should resolve when content-type is undefined', () => {
+
+      nock('http://ex.org')
+      .get('/path/').reply(200,
+`@prefix : <http://ex.org/ex#>
+:_ a :test`);
+
+      return expect(interceptor.interceptResponse({
+        headers: "", method: "GET", path: "/path/", port: undefined, protocol: "http:", hostname: "ex.org", query: "",
+      })).resolves.toBeUndefined();
+
+    });
+
+  });
+
+  afterEach(() => {
+    if (! fs.existsSync(jestTestFolder)) {
+      fse.removeSync(jestTestFolder);
+    }
   });
 
 });

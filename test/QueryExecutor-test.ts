@@ -1,4 +1,6 @@
+import { Stream } from 'stream';
 import { QueryExecutor } from '../lib/QueryExecutor';
+const nock = require('nock');
 
 jest.useFakeTimers();
 
@@ -8,10 +10,12 @@ describe('QueryExecutor', () => {
 
   describe('#runQuery', () => {
 
-    it('Should resolve', () => {
-      expect(queryExecutor.runQuery(
+    it('should resolve', () => {
+
+      return expect(queryExecutor.runQuery(
         'SELECT * WHERE { ?s ?p <http://dbpedia.org/resource/Belgium>. ?s ?p ?o } LIMIT 5',
-        ['http://fragments.dbpedia.org/2015/en'])).resolves;
+        ['http://fragments.dbpedia.org/2015/en'])).resolves.toBeTruthy();
+
     });
 
   });

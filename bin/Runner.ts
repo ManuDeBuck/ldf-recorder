@@ -68,13 +68,15 @@ while(args._.length){
 const interceptOptions: IInterceptOptions[] = [];
 const queryExecutor: QueryExecutor  = new QueryExecutor();
 queryExecutor.runQuery(query, dataSources).then(async (results: Bindings[]) => {
-  const resultWriter: ResultWriter = new ResultWriter(writeConfig);
-  resultWriter.writeResultsToFile(results);
   // undo overwriting of http.request
   http.request = originalRequest;
+  // Intercept and record all requests
   const interceptor: HttpInterceptor = new HttpInterceptor(writeConfig);
   for(let interceptOption of interceptOptions){
     // For every intercepted request we should 'mock' the response
     await interceptor.interceptResponse(interceptOption);
   }
+  // Write result of query in 'sparql-result-json' file
+  const resultWriter: ResultWriter = new ResultWriter(writeConfig);
+  resultWriter.writeResultsToFile(results);
 });

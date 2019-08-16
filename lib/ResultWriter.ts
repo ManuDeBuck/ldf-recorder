@@ -1,7 +1,10 @@
+import { ActorSparqlSerializeSparqlJson } from "@comunica/actor-sparql-serialize-sparql-json";
 import { Bindings } from "@comunica/bus-query-operation";
 import { IWriteConfig } from "./HttpInterceptor";
+
 // tslint:disable:no-var-requires
 const fs = require('fs');
+// tslint:enable:no-var-requires
 import * as RDF from "rdf-js";
 
 export class ResultWriter {
@@ -12,6 +15,10 @@ export class ResultWriter {
     this.writeConfig = writeConfig;
   }
 
+  /**
+   * Write the QUERY-results to a .srj file
+   * @param results The bindings returned from the query-engine
+   */
   public writeResultsToFile(results: Bindings[]): void {
     fs.writeFile(`${this.writeConfig.directory}/result.srj`, this.bindingsToSparqlJsonResult(results), (err: any) => {
       if (err) {
@@ -21,6 +28,10 @@ export class ResultWriter {
     });
   }
 
+  /**
+   * Transform the bindings to the SPARQLJsonResult format used for testing
+   * @param bindings The bindings returned from the query-engine
+   */
   private bindingsToSparqlJsonResult(bindings: Bindings[]): string {
     const head: any = {};
     head.vars = [];
@@ -34,36 +45,12 @@ export class ResultWriter {
       const bres: any = {};
       binding.keySeq().forEach((key: string) => {
         const value: RDF.Term = binding.get(key);
-        bres[key.substr(1)] = this.bindingToJsonBindings(value);
+        bres[key.substr(1)] = ActorSparqlSerializeSparqlJson.bindingToJsonBindings(value);
       });
       results.bindings.push(bres);
     }
 
     return JSON.stringify({head, results}, null, 1);
-  }
-
-  /**
-   * Converts an RDF term to its JSON representation.
-   * @param {RDF.Term} value An RDF term.
-   * @return {any} A JSON object.
-   */
-  private bindingToJsonBindings(value: RDF.Term): any {
-    if (value.termType === 'Literal') {
-      const literal: RDF.Literal = <RDF.Literal> value;
-      const jsonValue: any = { value: literal.value, type: 'literal' };
-      const language: string = literal.language;
-      const datatype: RDF.NamedNode = literal.datatype;
-      if (language) {
-        jsonValue['xml:lang'] = language;
-      } else if (datatype && datatype.value !== 'http://www.w3.org/2001/XMLSchema#string') {
-        jsonValue.datatype = datatype.value;
-      }
-      return jsonValue;
-    } else if (value.termType === 'BlankNode') {
-      return { value: value.value, type: 'bnode' };
-    } else {
-      return { value: value.value, type: 'uri' };
-    }
   }
 
 }

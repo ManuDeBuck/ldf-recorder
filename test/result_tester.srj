@@ -1,0 +1,27 @@
+{
+ "head": {
+  "vars": [
+   "o",
+   "s",
+   "p"
+  ]
+ },
+ "results": {
+  "bindings": [
+   {
+    "o": {
+     "value": "http://ex.org/oa",
+     "type": "uri"
+    },
+    "s": {
+     "value": "http://ex.org/os",
+     "type": "uri"
+    },
+    "p": {
+     "value": "http://ex.org/op",
+     "type": "uri"
+    }
+   }
+  ]
+ }
+}
