@@ -16,4 +16,5 @@ yarn-error.log
 **/index.d.ts
 coverage
 tests
-**/tmpfolder/*
+**/tmpfolder/*.srj
+**/tmpfolder/*.ttl
