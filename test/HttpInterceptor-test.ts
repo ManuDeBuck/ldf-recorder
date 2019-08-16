@@ -14,7 +14,7 @@ describe('HttpInterceptor', () => {
     }
   });
 
-  const jestTestFolder: string = 'test/tmpfolder/';
+  const jestTestFolder: string = path.join('test', 'tmpfolder', '/');
 
   const interceptor: HttpInterceptor = new HttpInterceptor({
     defaultDirectory: true, directory: jestTestFolder });
@@ -41,10 +41,7 @@ describe('HttpInterceptor', () => {
           const filename: string = crypto.createHash('sha1')
                           .update(fn)
                           .digest('hex') + '.ttl';
-          const fileContent: string = fs.readFileSync(jestTestFolder + filename, 'utf8');
-          expect(path.extname(files[0])).toEqual('.ttl');
-          expect(files[0]).toEqual(filename);
-          expect(amount > 0).toBeTruthy();
+          const fileContent: string = fs.readFileSync(path.join(jestTestFolder, filename), 'utf8');
           expect(fileContent.startsWith(`# Query: ${""}
 # Hashed IRI: ${fn}
 # Content-type: ${ct}`)).toBeTruthy();

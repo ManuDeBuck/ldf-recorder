@@ -26,10 +26,10 @@ describe('ResultWriter', () => {
 
   const writeConfig: IWriteConfig = {
     defaultDirectory: false,
-    directory: 'test/tmpfolder',
+    directory: path.join('test', 'tmpfolder'),
   };
 
-  const fileExpected: string = 'test/result_tester.srj';
+  const fileExpected: string = path.join('test', 'result_tester.srj');
 
   describe('writeResultsToFile', () => {
 
@@ -47,7 +47,7 @@ describe('ResultWriter', () => {
 
         resultWriter.writeResultsToFile(bindings);
 
-        const filename: string = writeConfig.directory + '/result.srj';
+        const filename: string = path.join(writeConfig.directory, '/result.srj');
         const fileContent: string = fs.readFileSync(filename, 'utf8');
         const expectedFileContent: string = fs.readFileSync(fileExpected, 'utf8');
         expect(path.extname(filename)).toEqual('.srj');
