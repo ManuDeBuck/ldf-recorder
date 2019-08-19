@@ -79,6 +79,8 @@ export class HttpInterceptor {
     switch (config.headers["content-type"]) {
     case "application/trig;charset=utf-8":
       return ".ttl";
+    case "application/sparql-results+json":
+      return "srj";
     default:
       return ".ttl";
     }
