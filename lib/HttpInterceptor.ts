@@ -80,7 +80,7 @@ export class HttpInterceptor {
     case "application/trig;charset=utf-8":
       return ".ttl";
     case "application/sparql-results+json":
-      return "srj";
+      return ".srj";
     default:
       return ".ttl";
     }
