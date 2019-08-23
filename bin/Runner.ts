@@ -7,18 +7,19 @@ import { ResultWriter } from "../lib/ResultWriter";
 import { Bindings } from "@comunica/bus-query-operation";
 import * as fs from 'fs';
 import * as Path from 'path';
+import * as C from '../lib/Colors';
 
 const http = require('http');
 
-const usageMessage = `tpf-recorder records all http-requests and responses for a specific SPARQL query.
-tpf-recorder is based on the comunica SPARQL query engine.
+const usageMessage = `${C.inColor(`tpf-recorder records all http-requests and responses for a specific SPARQL- or TPF- query.
+tpf-recorder is based on the comunica SPARQL query engine.`,C.CYAN)}
 
-Usage:
+${C.inColor('Usage: ', C.YELLOW)}:
   tpf-recorder source 'QUERY'
   tpf-recorder source1 source2 'QUERY'
   tpf-recorder source 'QUERY' -d ./path/to/folder
 
-Options: 
+${C.inColor('Options: ', C.YELLOW)}
   -d    Change the directory where the outputfiles should be stored. Default directory is ./tests/`;
 
 const args = minimist(process.argv.slice(2));
