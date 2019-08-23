@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import minimist = require("minimist");
-import { QueryExecutor } from "../lib/QueryExecutor";
+import { QueryExecutor, IQueryResult } from "../lib/QueryExecutor";
 import { ClientRequest, IncomingMessage } from "http";
 import { HttpInterceptor, IInterceptOptions, IWriteConfig } from "../lib/HttpInterceptor";
 import { ResultWriter } from "../lib/ResultWriter";
@@ -67,7 +67,7 @@ while(args._.length){
 // Every request's options will be stored in interceptOptions
 const interceptOptions: IInterceptOptions[] = [];
 const queryExecutor: QueryExecutor  = new QueryExecutor();
-queryExecutor.runQuery(query, dataSources).then(async (results: Bindings[]) => {
+queryExecutor.runQuery(query, dataSources).then(async (results: IQueryResult) => {
   // undo overwriting of http.request
   http.request = originalRequest;
   // Intercept and record all requests

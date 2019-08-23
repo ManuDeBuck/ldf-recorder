@@ -76,9 +76,7 @@ export class HttpInterceptor {
   private getExtension(config: IMockedFile): string {
     switch (config.headers["content-type"]) {
     case "application/trig;charset=utf-8":
-      return ".ttl";
-    case "application/sparql-results+json":
-      return ".srj";
+      return ".trig";
     default:
       return ".ttl";
     }

@@ -1,6 +1,5 @@
 import * as crypto from 'crypto';
 import * as fs from 'fs';
-import * as fse from 'fs-extra';
 import * as nock from 'nock';
 import * as path from 'path';
 import { HttpInterceptor } from '../lib/HttpInterceptor';
@@ -39,7 +38,7 @@ describe('HttpInterceptor', () => {
           const amount: number = files.length;
           const filename: string = crypto.createHash('sha1')
                           .update(fn)
-                          .digest('hex') + '.ttl';
+                          .digest('hex') + '.trig';
           const fileContent: string = fs.readFileSync(path.join(jestTestFolder, filename), 'utf8');
           expect(fileContent.startsWith(`# Query: ${""}
 # Hashed IRI: ${fn}
