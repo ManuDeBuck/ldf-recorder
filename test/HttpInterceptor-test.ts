@@ -1,10 +1,9 @@
+import * as crypto from 'crypto';
+import * as fs from 'fs';
+import * as fse from 'fs-extra';
+import * as nock from 'nock';
+import * as path from 'path';
 import { HttpInterceptor } from '../lib/HttpInterceptor';
-
-const nock = require('nock');
-const fs = require('fs');
-const fse = require('fs-extra');
-const crypto = require('crypto');
-const path = require('path');
 
 describe('HttpInterceptor', () => {
 
@@ -14,7 +13,7 @@ describe('HttpInterceptor', () => {
     }
   });
 
-  const jestTestFolder: string = path.join('test', 'tmpfolder', '/');
+  const jestTestFolder: string = path.join(process.cwd(), 'test', 'tmpfolder', '/');
 
   const interceptor: HttpInterceptor = new HttpInterceptor({
     defaultDirectory: true, directory: jestTestFolder });
@@ -77,12 +76,6 @@ describe('HttpInterceptor', () => {
 
     });
 
-  });
-
-  afterEach(() => {
-    if (! fs.existsSync(jestTestFolder)) {
-      fse.removeSync(jestTestFolder);
-    }
   });
 
 });

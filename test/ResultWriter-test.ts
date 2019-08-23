@@ -1,12 +1,12 @@
 import { ActorSparqlSerializeSparqlJson } from "@comunica/actor-sparql-serialize-sparql-json";
 import { Bindings } from "@comunica/bus-query-operation";
 import { namedNode} from "@rdfjs/data-model";
+import * as fs from 'fs';
+import * as fse from 'fs-extra';
 import { Map } from "immutable";
+import * as path from 'path';
 import { IWriteConfig } from "../lib/HttpInterceptor";
 import { ResultWriter } from "../lib/ResultWriter";
-const fs = require('fs');
-const fse = require('fs-extra');
-const path = require('path');
 
 const binding: Bindings = Map(
   {
@@ -26,10 +26,10 @@ describe('ResultWriter', () => {
 
   const writeConfig: IWriteConfig = {
     defaultDirectory: false,
-    directory: path.join('test', 'tmpfolder'),
+    directory: path.join(process.cwd(), 'test', 'tmpfolder'),
   };
 
-  const fileExpected: string = path.join('test', 'result_tester.srj');
+  const fileExpected: string = path.join(process.cwd(), 'test', 'result_expected.srj');
 
   describe('writeResultsToFile', () => {
 
@@ -41,13 +41,13 @@ describe('ResultWriter', () => {
 
     describe('#writeResultsToFile', () => {
 
-      it('Should write the results to result.srj', () => {
+      it('Should write the results to result.srj', async () => {
 
         const resultWriter: ResultWriter = new ResultWriter(writeConfig);
 
-        resultWriter.writeResultsToFile(bindings);
+        await resultWriter.writeResultsToFile(bindings);
 
-        const filename: string = path.join(writeConfig.directory, '/result.srj');
+        const filename: string = path.join(writeConfig.directory, 'result.srj');
         const fileContent: string = fs.readFileSync(filename, 'utf8');
         const expectedFileContent: string = fs.readFileSync(fileExpected, 'utf8');
         expect(path.extname(filename)).toEqual('.srj');

@@ -1,6 +1,6 @@
+import * as nock from 'nock';
 import { Stream } from 'stream';
 import { QueryExecutor } from '../lib/QueryExecutor';
-const nock = require('nock');
 
 jest.useFakeTimers();
 

@@ -1,20 +1,18 @@
+import * as crypto from 'crypto';
 import * as fs from 'fs';
 import { ClientRequest, IncomingMessage } from "http";
 import * as http from 'http';
-
-// tslint:disable:no-var-requires
-const crypto = require('crypto');
-// tslint:enabe:no-var-requires
+import * as Path from 'path';
 
 /**
  * A class for intercepting and recording the HTTP-response body of a TPF-request
  */
 export class HttpInterceptor {
 
-  private readonly interceptorConfig: IWriteConfig;
+  private readonly writeConfig: IWriteConfig;
 
-  constructor(interceptorConfig: IWriteConfig) {
-    this.interceptorConfig = interceptorConfig;
+  constructor(writeConfig: IWriteConfig) {
+    this.writeConfig = writeConfig;
   }
 
   /**
@@ -62,7 +60,7 @@ export class HttpInterceptor {
    */
   private writeToFile(config: IMockedFile): void {
     config.body = this.getHeaderLines(config) + config.body;
-    fs.writeFile(`${this.interceptorConfig.directory}${config.filename}${this.getExtension(config)}`,
+    fs.writeFile(Path.join(this.writeConfig.directory, config.filename + this.getExtension(config)),
     config.body, (err: any) => {
       if (err) {
         throw new Error(`in writeToFile: could not write TPF-query results to file: ${config.filename}`);

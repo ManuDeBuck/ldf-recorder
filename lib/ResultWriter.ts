@@ -1,11 +1,9 @@
 import { ActorSparqlSerializeSparqlJson } from "@comunica/actor-sparql-serialize-sparql-json";
 import { Bindings } from "@comunica/bus-query-operation";
-import { IWriteConfig } from "./HttpInterceptor";
-
-// tslint:disable:no-var-requires
-const fs = require('fs');
-// tslint:enable:no-var-requires
+import * as fs from 'fs';
+import * as Path from 'path';
 import * as RDF from "rdf-js";
+import { IWriteConfig } from "./HttpInterceptor";
 
 export class ResultWriter {
 
@@ -19,12 +17,16 @@ export class ResultWriter {
    * Write the QUERY-results to a .srj file
    * @param results The bindings returned from the query-engine
    */
-  public writeResultsToFile(results: Bindings[]): void {
-    fs.writeFile(`${this.writeConfig.directory}/result.srj`, this.bindingsToSparqlJsonResult(results), (err: any) => {
-      if (err) {
-        throw new Error(`in writeResultsToFile: could not write TPF-query result to file: result.srj`);
-      }
-      // else: ok
+  public writeResultsToFile(results: Bindings[]): Promise<void> {
+    return new Promise((resolve, reject) => {
+      fs.writeFile(Path.join(this.writeConfig.directory, 'result.srj'),
+        this.bindingsToSparqlJsonResult(results), (err: any) => {
+          if (err) {
+            throw new Error(`in writeResultsToFile: could not write TPF-query result to file: result.srj`);
+          }
+          resolve();
+        // else: ok
+        });
     });
   }
 

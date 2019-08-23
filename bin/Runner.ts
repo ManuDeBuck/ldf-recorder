@@ -3,12 +3,12 @@ import minimist = require("minimist");
 import { QueryExecutor } from "../lib/QueryExecutor";
 import { ClientRequest, IncomingMessage } from "http";
 import { HttpInterceptor, IInterceptOptions, IWriteConfig } from "../lib/HttpInterceptor";
-import { Util } from "../lib/Util";
 import { ResultWriter } from "../lib/ResultWriter";
 import { Bindings } from "@comunica/bus-query-operation";
+import * as fs from 'fs';
+import * as Path from 'path';
 
 const http = require('http');
-const fs = require('fs');
 
 const usageMessage = `tpf-recorder records all http-requests and responses for a specific SPARQL query.
 tpf-recorder is based on the comunica SPARQL query engine.
@@ -19,7 +19,7 @@ Usage:
   tpf-recorder source 'QUERY' -d ./path/to/folder
 
 Options: 
-  -d    Change the directory where the outputfiles should be stored. Default is ./tests/`;
+  -d    Change the directory where the outputfiles should be stored. Default directory is ./tests/`;
 
 const args = minimist(process.argv.slice(2));
 
@@ -46,8 +46,8 @@ http.request = function wrapRequest(options: any) : ClientRequest {
 // The configuration used for the interceptor
 const writeConfig: IWriteConfig = {
   defaultDirectory: args.d ? true : false,
-  directory: args.d ? Util.makePath(args.d) : 'tests/'
-} // TODO: Test this
+  directory: Path.join(process.cwd(), args.d ? args.d : 'tests')
+}
 
 // Check if directory exists
 if(! fs.existsSync(writeConfig.directory)){
@@ -56,7 +56,6 @@ if(! fs.existsSync(writeConfig.directory)){
 
 // Fetch the QUERY
 const query: string = args._.pop();
-// TODO: Maybe do some testing for legitimate queries
 
 // Fetch the data sources given
 const dataSources: string[] = [];
