@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import { Map } from "immutable";
 import { DataFactory, Quad} from "n3";
-import * as path from 'path';
+import * as Path from 'path';
 import { IWriteConfig } from "../lib/HttpInterceptor";
 import { QueryType } from "../lib/QueryExecutor";
 import { ResultWriter } from "../lib/ResultWriter";
@@ -38,10 +38,10 @@ describe('ResultWriter', () => {
 
   const writeConfig: IWriteConfig = {
     defaultDirectory: false,
-    directory: path.join(process.cwd(), 'test', 'tmpfolder'),
+    directory: Path.join(process.cwd(), 'test', 'tmpfolder'),
   };
 
-  const fileExpected: string = path.join(process.cwd(), 'test', 'result_expected.srj');
+  const fileExpected: string = Path.join(process.cwd(), 'test', 'result_expected.srj');
 
   describe('#writeResultsToFile', () => {
 
@@ -55,11 +55,12 @@ describe('ResultWriter', () => {
 
       await resultWriter.writeResultsToFile({type: QueryType.SELECT, value: bindings });
 
-      const filename: string = path.join(writeConfig.directory, 'result.srj');
+      const filename: string = Path.join(writeConfig.directory, 'result.srj');
       const fileContent: string = fs.readFileSync(filename, 'utf8');
       const expectedFileContent: string = fs.readFileSync(fileExpected, 'utf8');
-      expect(path.extname(filename)).toEqual('.srj');
+      expect(Path.extname(filename)).toEqual('.srj');
       expect(fileContent).toEqual(expectedFileContent);
+      fse.removeSync(Path.join(writeConfig.directory, 'result.srj'));
 
     });
 
@@ -68,10 +69,11 @@ describe('ResultWriter', () => {
 
       await resultWriter.writeResultsToFile({type: QueryType.ASK, value: bool});
 
-      const filename: string = path.join(writeConfig.directory, 'result.srj');
+      const filename: string = Path.join(writeConfig.directory, 'result.srj');
       const fileContent: string = fs.readFileSync(filename, 'utf8');
-      expect(path.extname(filename)).toEqual('.srj');
+      expect(Path.extname(filename)).toEqual('.srj');
       expect(fileContent).toEqual(`{"head":{},"boolean":false}`);
+      fse.removeSync(Path.join(writeConfig.directory, 'result.srj'));
 
     });
 
@@ -80,10 +82,12 @@ describe('ResultWriter', () => {
 
       await resultWriter.writeResultsToFile({type: QueryType.CONSTRUCT, value: quads});
 
-      const filename: string = path.join(writeConfig.directory, 'result.ttl');
+      const filename: string = Path.join(writeConfig.directory, 'result.ttl');
       const fileContent: string = fs.readFileSync(filename, 'utf8');
-      expect(path.extname(filename)).toEqual('.ttl');
+      expect(Path.extname(filename)).toEqual('.ttl');
       expect(fileContent.trim()).toEqual(`<https://m.org/#> <https://e.org/p> \"A\"@en.`);
+      fse.removeSync(Path.join(writeConfig.directory, 'result.ttl'));
+
     });
 
   });

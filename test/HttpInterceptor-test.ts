@@ -1,7 +1,8 @@
 import * as crypto from 'crypto';
 import * as fs from 'fs';
+import * as fse from 'fs-extra';
 import * as nock from 'nock';
-import * as path from 'path';
+import * as Path from 'path';
 import { HttpInterceptor } from '../lib/HttpInterceptor';
 
 describe('HttpInterceptor', () => {
@@ -12,7 +13,7 @@ describe('HttpInterceptor', () => {
     }
   });
 
-  const jestTestFolder: string = path.join(process.cwd(), 'test', 'tmpfolder', '/');
+  const jestTestFolder: string = Path.join(process.cwd(), 'test', 'tmpfolder');
 
   const interceptor: HttpInterceptor = new HttpInterceptor({
     defaultDirectory: true, directory: jestTestFolder });
@@ -35,14 +36,14 @@ describe('HttpInterceptor', () => {
         headers: "", method: "GET", path: "/path/", port: undefined, protocol: "http:", hostname: "ex.org", query: "",
       }).then(() => {
         fs.readdir(jestTestFolder, (error, files) => {
-          const amount: number = files.length;
           const filename: string = crypto.createHash('sha1')
                           .update(fn)
                           .digest('hex') + '.trig';
-          const fileContent: string = fs.readFileSync(path.join(jestTestFolder, filename), 'utf8');
+          const fileContent: string = fs.readFileSync(Path.join(jestTestFolder, filename), 'utf8');
           expect(fileContent.startsWith(`# Query: ${""}
 # Hashed IRI: ${fn}
 # Content-type: ${ct}`)).toBeTruthy();
+          fse.removeSync(Path.join(jestTestFolder, filename));
         });
       });
     });
@@ -73,6 +74,17 @@ describe('HttpInterceptor', () => {
         headers: "", method: "GET", path: "/path/", port: undefined, protocol: "http:", hostname: "ex.org", query: "",
       })).resolves.toBeUndefined();
 
+    });
+
+    afterAll(() => {
+      const filenamettl: string = crypto.createHash('sha1')
+      .update(fn)
+      .digest('hex') + '.ttl';
+      const filenametrig: string = crypto.createHash('sha1')
+      .update(fn)
+      .digest('hex') + '.trig';
+      fse.removeSync(Path.join(jestTestFolder, filenametrig));
+      fse.removeSync(Path.join(jestTestFolder, filenamettl));
     });
 
   });
