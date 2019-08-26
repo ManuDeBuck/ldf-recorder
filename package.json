@@ -1,15 +1,14 @@
 {
-  "name": "tpf-recorder",
-  "version": "1.0.0",
-  "description": "A tool for recording all HTTP- requests and responses when querying a TPF server",
+  "name": "ldf-recorder",
+  "description": "A tool for recording all HTTP- requests and responses when querying a TPF/ SPARQL endpoint",
   "main": "index.js",
-  "repository": "https://github.com/ManuDeBuck/tpf-recorder.git",
-  "author": "Manu De Buck <manu.debuck@telenet.be>",
+  "repository": "https://github.com/comunica/ldf-recorder.git",
+  "author": "Manu De Buck <manu.debuck@mdebuck.org>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ManuDeBuck/tpf-recorder/issues"
+    "url": "https://github.com/comunica/ldf-recorder/issues"
   },
-  "homepage": "https://github.com/ManuDeBuck/tpf-recorders#readme",
+  "homepage": "https://github.com/comunica/ldf-recorders#readme",
   "contributors": [],
   "bin": {
     "tpf-recorder": "bin/Runner.js"
