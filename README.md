@@ -1,4 +1,6 @@
 # tpf-recorder
+[![Build Status](https://travis-ci.org/comunica/ldf-recorder.svg?branch=master)](https://travis-ci.org/comunica/ldf-recorder) [![Coverage Status](https://coveralls.io/repos/github/comunica/ldf-recorder/badge.svg?branch=master)](https://coveralls.io/github/comunica/ldf-recorder?branch=master)
+
 This is a nodejs CLI-tool for recording all HTTP- requests and responses when querying a TPF endpoint. (note: SPARQL-endpoint recording is coming soon). This tool can be used to create mock-test-files for the integration-test-suite for query engines: [rdf-test-suite-ldf](https://github.com/comunica/rdf-test-suite-ldf.js)
 
 ## Installation
