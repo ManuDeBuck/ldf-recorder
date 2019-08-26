@@ -1,5 +1,5 @@
 # tpf-recorder
-This is a nodejs CLI-tool for recording all HTTP- requests and responses when querying a TPF endpoint. (note: SPARQL-endpoint recording is coming soon). This tool can be used to create mock-test-files for the integration-test-suite for query engines: [rdf-test-suite-ldf](https://github.com/ManuDeBuck/rdf-test-suite-ldf.js)
+This is a nodejs CLI-tool for recording all HTTP- requests and responses when querying a TPF endpoint. (note: SPARQL-endpoint recording is coming soon). This tool can be used to create mock-test-files for the integration-test-suite for query engines: [rdf-test-suite-ldf](https://github.com/comunica/rdf-test-suite-ldf.js)
 
 ## Installation
 
@@ -17,8 +17,8 @@ $ command coming soon
 
 ## Usage
 
-This CLI tool can be used to record all requests and responses when querying a TPF endpoint (by SPARQL-queries). This can be used for mocking responses when testing your TPF-query engine(s) such as the [comunica query-engines](https://github.com/ManuDeBuck/comunica-engines) based on the [comunica](https://github.com/comunica/comunica) query engine platform. 
-More information on integration testing of query engines can be found in the [rdf-test-suite-ldf](https://github.com/ManuDeBuck/rdf-test-suite-ldf.js) and the [engine-ontology](https://github.com/ManuDeBuck/engine-ontology).
+This CLI tool can be used to record all requests and responses when querying a TPF endpoint (by SPARQL-queries). This can be used for mocking responses when testing your TPF-query engine(s) such as the [comunica query-engines](https://github.com/comunica/comunica) based on the [comunica](https://github.com/comunica/) query engine platform. 
+More information on integration testing of query engines can be found in the [rdf-test-suite-ldf](https://github.com/comunica/rdf-test-suite-ldf.js) and the [engine-ontology](https://github.com/comunica/ontology-query-testing).
 
 ### Basic execution
 
