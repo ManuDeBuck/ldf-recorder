@@ -5,7 +5,7 @@ import * as fse from 'fs-extra';
 import { Map } from "immutable";
 import { DataFactory, Quad} from "n3";
 import * as Path from 'path';
-import { IWriteConfig } from "../lib/HttpInterceptor";
+import { IWriteConfig } from "../lib/IRecorder";
 import { QueryType } from "../lib/QueryExecutor";
 import { ResultWriter } from "../lib/ResultWriter";
 const { namedNode, literal, defaultGraph, quad } = DataFactory;

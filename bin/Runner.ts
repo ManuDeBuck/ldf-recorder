@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 import minimist = require("minimist");
-import { QueryExecutor, IQueryResult } from "../lib/QueryExecutor";
-import { ClientRequest, IncomingMessage } from "http";
-import { HttpInterceptor, IInterceptOptions, IWriteConfig } from "../lib/HttpInterceptor";
+import { QueryExecutor } from "../lib/QueryExecutor";
+import { ClientRequest } from "http";
+import { HttpInterceptor } from "../lib/HttpInterceptor";
 import { ResultWriter } from "../lib/ResultWriter";
 import { Bindings } from "@comunica/bus-query-operation";
 import * as fs from 'fs';
 import * as Path from 'path';
 import * as C from '../lib/Colors';
+import { IWriteConfig, IInterceptOptions, IQueryResult } from "../lib/IRecorder";
 
 const http = require('http');
 

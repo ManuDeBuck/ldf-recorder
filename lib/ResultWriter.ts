@@ -4,8 +4,8 @@ import * as fs from 'fs';
 import { Quad, Writer } from "n3";
 import * as Path from 'path';
 import * as RDF from "rdf-js";
-import { IWriteConfig } from "./HttpInterceptor";
-import { IQueryResult, QueryType } from "./QueryExecutor";
+import { IQueryResult, IWriteConfig } from "./IRecorder";
+import { QueryType } from "./QueryExecutor";
 
 export class ResultWriter {
 
