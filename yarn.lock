@@ -186,10 +186,10 @@
   resolved "https://registry.yarnpkg.com/@comunica/actor-http-proxy/-/actor-http-proxy-1.9.0.tgz#66bebc509cf66f5d13c6c63d41e2a13584acc811"
   integrity sha512-fLBXL5NVuTGH9kc4BfXFwRAwHUDXB07fV1SBRpewobMMextWTXe5UF9vQvdLrlhg+Dy2EJYBS1jKpfjzs8MWIg==
 
-"@comunica/actor-init-sparql@^1.9.1":
-  version "1.9.1"
-  resolved "https://registry.yarnpkg.com/@comunica/actor-init-sparql/-/actor-init-sparql-1.9.1.tgz#6c50eb6242ea71ab9fe98f28e5b19514482ca282"
-  integrity sha512-2oKvjitwQQDFPpLbDi2x5flqVf0i09wXAH5JPhXHuxvYFXUq8F5eMsBVQogNmT8oNvWI3snyxaOFgCu+SGmFDA==
+"@comunica/actor-init-sparql@1.9.0":
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/@comunica/actor-init-sparql/-/actor-init-sparql-1.9.0.tgz#11c0e9c14e2acfcf50b4315f50fc344ac25cd025"
+  integrity sha512-00WIvd31I/8vaurJM6M5vUmfgaWVLUA2Ot2BppHb1cCXSlxg50xoJwfXuZNT6kDG4HY/tJUIJjHFPCEHQzpWxA==
   dependencies:
     "@comunica/actor-abstract-bindings-hash" "^1.9.0"
     "@comunica/actor-abstract-mediatyped" "^1.9.0"
@@ -243,8 +243,8 @@
     "@comunica/actor-rdf-parse-rdfxml" "^1.9.0"
     "@comunica/actor-rdf-parse-xml-rdfa" "^1.9.0"
     "@comunica/actor-rdf-resolve-hypermedia-links-next" "^1.9.0"
-    "@comunica/actor-rdf-resolve-hypermedia-none" "^1.9.1"
-    "@comunica/actor-rdf-resolve-hypermedia-qpf" "^1.9.1"
+    "@comunica/actor-rdf-resolve-hypermedia-none" "^1.9.0"
+    "@comunica/actor-rdf-resolve-hypermedia-qpf" "^1.9.0"
     "@comunica/actor-rdf-resolve-hypermedia-sparql" "^1.9.0"
     "@comunica/actor-rdf-resolve-quad-pattern-federated" "^1.9.0"
     "@comunica/actor-rdf-resolve-quad-pattern-hypermedia" "^1.9.0"
@@ -647,14 +647,14 @@
   resolved "https://registry.yarnpkg.com/@comunica/actor-rdf-resolve-hypermedia-links-next/-/actor-rdf-resolve-hypermedia-links-next-1.9.0.tgz#f4765b4866d9bba19535c6f41a3e1f3fde546d53"
   integrity sha512-ahhLRXMZL6VMQmS80QwhI5i25hp1IoEzMglsQPdRBbnLV1r1IsurkkMQ6O08tibcdVcsgF6MDJPwMlsbH3l06w==
 
-"@comunica/actor-rdf-resolve-hypermedia-none@^1.9.1":
+"@comunica/actor-rdf-resolve-hypermedia-none@^1.9.0":
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/@comunica/actor-rdf-resolve-hypermedia-none/-/actor-rdf-resolve-hypermedia-none-1.9.1.tgz#36ae878e384c29d1693f74320df7fbc0d1ed1265"
   integrity sha512-z6sZClhTwHDwrWMiN+cgHyoRSi1wcsc2M6FDVhco3L48EFv6lktvOSC4w810gZEXL3aA5T7SmKAHSPeIcP49RA==
   dependencies:
     rdf-store-stream "^1.0.0"
 
-"@comunica/actor-rdf-resolve-hypermedia-qpf@^1.9.1":
+"@comunica/actor-rdf-resolve-hypermedia-qpf@^1.9.0":
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/@comunica/actor-rdf-resolve-hypermedia-qpf/-/actor-rdf-resolve-hypermedia-qpf-1.9.1.tgz#eeb02371f6e568a118306a46885a22395083ea3e"
   integrity sha512-cupiDFoiXiD1tfxmSEsAPJY7D9+PP0nmCHaz4mYRbn/KX9WRO52mWHXx30bLbgdJQuxB6A2c5hmNGvzcc5iekw==
