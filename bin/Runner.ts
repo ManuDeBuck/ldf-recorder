@@ -11,6 +11,7 @@ import * as C from '../lib/Colors';
 import { IWriteConfig, IInterceptOptions, IQueryResult } from "../lib/IRecorder";
 
 const http = require('http');
+const https = require('https');
 
 const usageMessage = `${C.inColor(`tpf-recorder records all http-requests and responses for a specific SPARQL- or TPF- query.
 tpf-recorder is based on the comunica SPARQL query engine.`,C.CYAN)}
@@ -31,19 +32,24 @@ if(args._.length < 2) {
 }
 
 // Overwrite request method to intercept the requests
-const originalRequest = http.request;
-http.request = function wrapRequest(options: any) : ClientRequest {
-  interceptOptions.push({
-    headers: options.headers,
-    method: options.method || 'GET', 
-    path: options.path,
-    port: options.port || 80, 
-    protocol: options.protocol || 'http:',
-    hostname: options.hostname,
-    query: options.query,
-  });
-  return originalRequest.apply(options, arguments);
+function wrapRequest(scheme: any, defaultSchemeString: string, defaultPort: number) {
+  const originalRequest = scheme.request;
+  scheme.request = function (options: any) {
+    interceptOptions.push({
+      headers: options.headers,
+      method: options.method || 'GET',
+      path: options.path,
+      port: options.port || defaultPort,
+      protocol: options.protocol || defaultSchemeString,
+      hostname: options.hostname,
+      query: options.query,
+    });
+    return originalRequest.apply(options, arguments);
+  };
+  return () => scheme.request = originalRequest;
 }
+const unwrapHttp = wrapRequest(http, 'http:', 80);
+const unwrapHttps = wrapRequest(https, 'https:', 443);
 
 // The configuration used for the interceptor
 const writeConfig: IWriteConfig = {
@@ -70,7 +76,8 @@ const interceptOptions: IInterceptOptions[] = [];
 const queryExecutor: QueryExecutor  = new QueryExecutor();
 queryExecutor.runQuery(query, dataSources).then(async (results: IQueryResult) => {
   // undo overwriting of http.request
-  http.request = originalRequest;
+  unwrapHttp();
+  unwrapHttps();
   // Intercept and record all requests
   const interceptor: HttpInterceptor = new HttpInterceptor(writeConfig);
   for(let interceptOption of interceptOptions){

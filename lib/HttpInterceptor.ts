@@ -2,6 +2,7 @@ import * as crypto from 'crypto';
 import * as fs from 'fs';
 import { ClientRequest, IncomingMessage } from "http";
 import * as http from 'http';
+import * as https from 'https';
 import * as Path from 'path';
 import { IInterceptOptions, IMockedFile, IWriteConfig } from './IRecorder';
 
@@ -18,15 +19,15 @@ export class HttpInterceptor {
 
   /**
    * Intercept a response from a TPF endpoint and save it in files
-   * @param interceptOptions 
+   * @param interceptOptions
    */
   public async interceptResponse(interceptOptions: IInterceptOptions): Promise<void> {
     return new Promise(async (resolve, reject) => {
-      const res: ClientRequest = http.request(interceptOptions);
+      const res: ClientRequest = (interceptOptions.protocol === 'http:' ? http : https).request(interceptOptions);
       let body = '';
       res.on('response', (incoming: IncomingMessage) => {
         incoming.setEncoding('utf8');
-        const headers: http.IncomingHttpHeaders = incoming.headers;
+        const headers = incoming.headers;
         incoming.on('data', (chunk: any) => {
           if (typeof chunk !== 'string') {
             throw new Error(`Chunk must be of type string, not of type: ${typeof chunk}`);
