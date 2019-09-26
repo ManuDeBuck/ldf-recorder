@@ -25,9 +25,11 @@ export class HttpInterceptor {
     return new Promise(async (resolve, reject) => {
       const res: ClientRequest = (interceptOptions.protocol === 'http:' ? http : https).request(interceptOptions);
       let body = '';
+      res.on('error', reject);
       res.on('response', (incoming: IncomingMessage) => {
         incoming.setEncoding('utf8');
         const headers = incoming.headers;
+        incoming.on('error', reject);
         incoming.on('data', (chunk: any) => {
           if (typeof chunk !== 'string') {
             throw new Error(`Chunk must be of type string, not of type: ${typeof chunk}`);
