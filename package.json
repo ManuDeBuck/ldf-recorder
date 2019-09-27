@@ -59,7 +59,7 @@
     "version": "manual-git-changelog onversion"
   },
   "dependencies": {
-    "@comunica/actor-init-sparql": "1.9.0",
+    "@comunica/actor-init-sparql": "1.9.2",
     "@types/minimist": "^1.2.0",
     "@types/n3": "^1.1.0",
     "@types/nock": "^10.0.3",
