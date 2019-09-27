@@ -1,5 +1,6 @@
 {
   "name": "ldf-recorder",
+  "version": "1.0.0",
   "description": "A tool for recording all HTTP- requests and responses when querying a TPF/ SPARQL endpoint",
   "main": "index.js",
   "repository": "https://github.com/comunica/ldf-recorder.git",
@@ -11,7 +12,7 @@
   "homepage": "https://github.com/comunica/ldf-recorders#readme",
   "contributors": [],
   "bin": {
-    "tpf-recorder": "bin/Runner.js"
+    "ldf-recorder": "bin/Runner.js"
   },
   "files": [
     "bin/**/*.d.ts",
@@ -73,6 +74,7 @@
     "fs-extra": "^8.1.0",
     "jest": "^24.8.0",
     "jest-rdf": "^1.3.0",
+    "manual-git-changelog": "^1.0.1",
     "pre-commit": "^1.2.2",
     "rdf-quad": "^1.4.0",
     "rdf-test-suite": "^1.9.3",

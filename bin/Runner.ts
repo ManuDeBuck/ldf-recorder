@@ -13,13 +13,12 @@ import { IWriteConfig, IInterceptOptions, IQueryResult } from "../lib/IRecorder"
 const http = require('http');
 const https = require('https');
 
-const usageMessage = `${C.inColor(`tpf-recorder records all http-requests and responses for a specific SPARQL- or TPF- query.
-tpf-recorder is based on the comunica SPARQL query engine.`,C.CYAN)}
+const usageMessage = `${C.inColor(`ldf-recorder records all http-requests and responses for a specific SPARQL- or TPF- query.
+ldf-recorder is based on the comunica SPARQL query engine.`,C.CYAN)}
 
 ${C.inColor('Usage: ', C.YELLOW)}:
-  tpf-recorder source 'QUERY'
-  tpf-recorder source1 source2 'QUERY'
-  tpf-recorder source 'QUERY' -d ./path/to/folder
+  ldf-recorder type@source [type@source2 [type@source3] 'QUERY' [-d ./path/to/folder]
+  ldf-recorder TPF@http://fragments.dbpedia.org/2016-04/en 'SELECT * WHERE { ?s ?p ?o } LIMIT 100'
 
 ${C.inColor('Options: ', C.YELLOW)}
   -d    Change the directory where the outputfiles should be stored. Default directory is ./tests/`;

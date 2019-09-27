@@ -1,25 +1,26 @@
 # ldf-recorder
+[![npm version](https://badge.fury.io/js/ldf-recorder.svg)](https://www.npmjs.com/package/ldf-recorder)
 [![Build Status](https://travis-ci.org/comunica/ldf-recorder.svg?branch=master)](https://travis-ci.org/comunica/ldf-recorder) [![Coverage Status](https://coveralls.io/repos/github/comunica/ldf-recorder/badge.svg?branch=master)](https://coveralls.io/github/comunica/ldf-recorder?branch=master)
 
-This is a nodejs CLI-tool for recording all HTTP- requests and responses when querying a TPF endpoint. (note: SPARQL-endpoint recording is coming soon). This tool can be used to create mock-test-files for the integration-test-suite for query engines, more info can be found on the [rdf-test-suite-ldf](https://github.com/comunica/rdf-test-suite-ldf.js) repository.
+This is a nodejs CLI-tool for recording all HTTP- requests and responses when querying a TPF endpoint. This tool can be used to create mock-test-files for the integration-test-suite for query engines, more info can be found on the [rdf-test-suite-ldf](https://github.com/comunica/rdf-test-suite-ldf.js) repository.
 
 ## Installation
 
 Either install it globally:
 
 ```bash
-$ command coming soon
+$ npm install -g ldf-recorder
 ```
 
 or locally (as a dev dependency):
 
 ```bash
-$ command coming soon
+$ npm install ldf-recorder
 ```
 
 ## Usage
 
-This CLI tool can be used to record all requests and responses when querying a TPF endpoint (by SPARQL-queries). This can be used for mocking responses when testing your TPF-query engine(s) such as the [comunica query-engines](https://github.com/comunica/comunica) based on the [comunica](https://github.com/comunica/) query engine platform. 
+This CLI tool can be used to record all requests and responses when querying a TPF endpoint (by SPARQL-queries). This can be used for mocking responses when testing your TPF-query engine(s) such as the [comunica query-engines](https://github.com/comunica/comunica) based on the [comunica](https://github.com/comunica/) query engine platform.
 More information on integration testing of query engines can be found in the [rdf-test-suite-ldf](https://github.com/comunica/rdf-test-suite-ldf.js) and the [engine-ontology](https://github.com/comunica/ontology-query-testing).
 
 ### Basic execution
@@ -27,7 +28,7 @@ More information on integration testing of query engines can be found in the [rd
 The following command will execute the query: `SELECT * WHERE { ?s ?p <http://dbpedia.org/resource/Belgium>. ?s ?p ?o } LIMIT 5` on the TPF-endpoint: [`http://fragments.dbpedia.org/2015/en`](http://fragments.dbpedia.org/2015/en). Every separate request-response pair will be recorded and saved in a folder. TPF-recorder uses the `tests/`-folder by default.
 
 ```bash
-$ tpf-recorder TPF@http://fragments.dbpedia.org/2015/en 'SELECT * WHERE { ?s ?p <http://dbpedia.org/resource/Belgium>. ?s ?p ?o } LIMIT 5'
+$ ldf-recorder TPF@http://fragments.dbpedia.org/2015/en 'SELECT * WHERE { ?s ?p <http://dbpedia.org/resource/Belgium>. ?s ?p ?o } LIMIT 5'
 ```
 
 #### Define sourcetype of source
@@ -45,19 +46,19 @@ The different identifiers that are supported are: `SPARQL`, `FILE`, `TPF`, `RDFJ
 
 #### Choose a different output directory
 
-All the recorded request-response files will, by default, be stored in the `tests/` folder. This output directory can be changed by adding the `-d` flag. 
+All the recorded request-response files will, by default, be stored in the `tests/` folder. This output directory can be changed by adding the `-d` flag.
 ```bash
-$ tpf-recorder TPF@http://fragments.dbpedia.org/2015/en 'SELECT * WHERE { ?s ?p <http://dbpedia.org/resource/Belgium>. ?s ?p ?o } LIMIT 5' -d path/to/folder
+$ ldf-recorder TPF@http://fragments.dbpedia.org/2015/en 'SELECT * WHERE { ?s ?p <http://dbpedia.org/resource/Belgium>. ?s ?p ?o } LIMIT 5' -d path/to/folder
 ```
 
 ## Recorded request-response files
 
 This CLI-tool will do two things when recording requests- and responses:
- 
+
 1. Store every request-response pair in a separate file.
 2. Store the SPARQL-query result in a `result.srj` or `result.ttl` file, depending on the type of query (`SELECT`, `ASK`, `CONSTRUCT`).
 
-Every request-response pair will be stored in a file without any extension. The filename of the pair is a `SHA-1` hash of the (percent decoded) request-url. That's because we want a one on one relationship between the request and the recorded file (and the request url does contain invalid and strange characters to be a filename). 
+Every request-response pair will be stored in a file without any extension. The filename of the pair is a `SHA-1` hash of the (percent decoded) request-url. That's because we want a one on one relationship between the request and the recorded file (and the request url does contain invalid and strange characters to be a filename).
 
 Every file contains the headers: `Query`, `Hashed IRI`, `Content-type` respectively representing the `TPF`-request or `SPARQL`-query. The requested IRI which `SHA-1`'s hash the filename is, and the `Content-type` of the HTTP-response so that we are able to provide a better http mocking experience.
 
@@ -120,4 +121,4 @@ This CLI-tool is based on the [comunica-query platorm](https://github.com/comuni
 
 ## License
 
-This software is written by [Manu De Buck](https://github.com/ManuDeBuck) and is released under the [MIT license](https://github.com/ManuDeBuck/tpf-recorder/blob/master/LICENSE)
+This software is written by [Manu De Buck](https://github.com/ManuDeBuck) and is released under the [MIT license](https://github.com/ManuDeBuck/ldf-recorder/blob/master/LICENSE)
