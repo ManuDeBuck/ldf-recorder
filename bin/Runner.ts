@@ -42,6 +42,7 @@ function wrapRequest(scheme: any, defaultSchemeString: string, defaultPort: numb
       protocol: options.protocol || defaultSchemeString,
       hostname: options.hostname,
       query: options.query,
+      body: options.body,
     });
     return originalRequest.apply(options, arguments);
   };

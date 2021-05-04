@@ -38,10 +38,12 @@ export class HttpInterceptor {
         });
         incoming.on('end', async () => {
           // Decode to get the pure URI
-          const requestIRI = decodeURIComponent(interceptOptions.protocol + '//' +
-                                                interceptOptions.hostname + interceptOptions.path);
+          let requestIRI = interceptOptions.protocol + '//' + interceptOptions.hostname + interceptOptions.path;
+          if (interceptOptions.method === 'POST') {
+            requestIRI += '@@POST:' + interceptOptions.body.toString();
+          }
           const filename = crypto.createHash('sha1')
-                          .update(requestIRI)
+                          .update(decodeURIComponent(requestIRI))
                           .digest('hex');
           const fileConfig: IMockedFile = {
             body,
@@ -54,6 +56,9 @@ export class HttpInterceptor {
           resolve();
         });
       });
+      if (interceptOptions.method === 'POST') {
+        res.write(interceptOptions.body.toString());
+      }
       res.end();
     });
   }

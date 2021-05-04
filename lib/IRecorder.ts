@@ -14,6 +14,7 @@ export interface IInterceptOptions {
   protocol: string;
   hostname: string;
   query: string;
+  body?: URLSearchParams;
 }
 
 /**
