@@ -1,6 +1,6 @@
 {
   "name": "ldf-recorder",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A tool for recording all HTTP- requests and responses when querying a TPF/ SPARQL endpoint",
   "main": "index.js",
   "repository": "https://github.com/comunica/ldf-recorder.git",
