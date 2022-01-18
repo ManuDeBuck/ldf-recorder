@@ -65,7 +65,9 @@
     "@types/nock": "^10.0.3",
     "@types/node": "^17.0.9",
     "minimist": "^1.2.0",
-    "nock": "^10.0.6"
+    "nock": "^10.0.6",
+    "node-fetch": "^2.6.7",
+    "stream-to-string": "^1.2.0"
   },
   "devDependencies": {
     "@comunica/actor-sparql-serialize-sparql-json": "^1.22.0",

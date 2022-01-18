@@ -51,7 +51,11 @@ describe('ResultWriter', () => {
     it('Should write the results of a binding', async() => {
       const resultWriter: ResultWriter = new ResultWriter(writeConfig);
 
-      await resultWriter.writeResultsToFile({ type: QueryType.SELECT, value: bindings });
+      await resultWriter.writeResultsToFile({
+        type: QueryType.SELECT,
+        value: bindings,
+        variables: [ '?o', '?s', '?p' ],
+      });
 
       const filename: string = Path.join(writeConfig.directory, 'result.srj');
       const fileContent: string = fs.readFileSync(filename, 'utf8');

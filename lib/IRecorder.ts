@@ -1,4 +1,3 @@
-import type * as http from 'http';
 import type { Bindings } from '@comunica/bus-query-operation';
 import type { Quad } from 'rdf-js';
 import type { QueryType } from './QueryExecutor';
@@ -7,14 +6,8 @@ import type { QueryType } from './QueryExecutor';
  * All the options necessary for intercepting and recording the response
  */
 export interface IInterceptOptions {
-  headers: any;
-  method: string;
-  path: string;
-  port: number;
-  protocol: string;
-  hostname: string;
-  query: string;
-  body?: URLSearchParams;
+  input: string;
+  init?: RequestInit;
 }
 
 /**
@@ -29,11 +22,11 @@ export interface IWriteConfig {
  * The information concerning a mocked file
  */
 export interface IMockedFile {
+  query: string;
   body: string;
   filename: string;
   hashedIRI: string;
-  headers: http.IncomingHttpHeaders;
-  query: string;
+  headers: Headers;
 }
 
 /**
@@ -50,4 +43,5 @@ export interface IQuerySource {
 export interface IQueryResult {
   type: QueryType;
   value: Bindings[] | boolean | Quad[];
+  variables?: string[];
 }

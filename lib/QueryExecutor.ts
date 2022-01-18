@@ -20,32 +20,36 @@ export class QueryExecutor {
    * it can be recorded and saved too
    * @param queryString The SPARQL-query string
    * @param tpfSources A list of remote TPF endpoints
+   * @param fetcher The fetch function to use.
    */
-  public async runQuery(queryString: string, tpfSources: string[]): Promise<IQueryResult> {
+  public async runQuery(queryString: string, tpfSources: string[], fetcher: typeof fetch): Promise<IQueryResult> {
     const queryType: QueryType = this.getQueryType(queryString);
     const querySources: IQuerySource[] = this.mapSources(tpfSources);
+    const context = { sources: querySources, fetch: fetcher };
     return new Promise(async(resolve, reject) => {
       switch (queryType) {
         case QueryType.SELECT:
           const rss: Bindings[] = [];
-          const rs = await this.myEngine.query(queryString, { sources: querySources });
+          const rs = await this.myEngine.query(queryString, context);
           await rs.bindingsStream.on('data', (data: Bindings) => {
             rss.push(data);
           });
+          rs.bindingsStream.on('error', reject);
           await rs.bindingsStream.on('end', async() => {
-            resolve({ type: QueryType.SELECT, value: rss });
+            resolve({ type: QueryType.SELECT, value: rss, variables: rs.variables });
           });
           break;
         case QueryType.ASK:
-          const ra = await this.myEngine.query(queryString, { sources: querySources });
+          const ra = await this.myEngine.query(queryString, context);
           resolve({ type: QueryType.ASK, value: await ra.booleanResult });
           break;
         case QueryType.CONSTRUCT:
           const rsc: Quad[] = [];
-          const rc = await this.myEngine.query(queryString, { sources: querySources });
+          const rc = await this.myEngine.query(queryString, context);
           await rc.quadStream.on('data', (data: Quad) => {
             rsc.push(data);
           });
+          rc.quadStream.on('error', reject);
           await rc.quadStream.on('end', async() => {
             resolve({ type: QueryType.CONSTRUCT, value: rsc });
           });
@@ -61,7 +65,7 @@ export class QueryExecutor {
   private getQueryType(queryString: string): QueryType {
     let content = queryString.split('\n');
     let fln = content[0];
-    while (fln.startsWith('PREFIX') || fln.trim() === '') {
+    while (fln.startsWith('PREFIX') || fln.startsWith('prefix') || fln.trim() === '') {
       content = content.slice(1);
       fln = content[0];
     }

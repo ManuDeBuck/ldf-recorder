@@ -9,9 +9,6 @@ import type { IWriteConfig, IInterceptOptions, IQueryResult } from '../lib/IReco
 import { QueryExecutor } from '../lib/QueryExecutor';
 import { ResultWriter } from '../lib/ResultWriter';
 
-const http = require('http');
-const https = require('https');
-
 const usageMessage = `${C.inColor(`ldf-recorder records all http-requests and responses for a specific SPARQL- or TPF- query.
 ldf-recorder is based on the comunica SPARQL query engine.`, C.CYAN)}
 
@@ -31,27 +28,15 @@ if (args._.length < 2) {
 }
 
 // Overwrite request method to intercept the requests
-function wrapRequest(scheme: any, defaultSchemeString: string, defaultPort: number): any {
-  const originalRequest = scheme.request;
-  scheme.request = function(options: any) {
-    interceptOptions.push({
-      headers: options.headers,
-      method: options.method || 'GET',
-      path: options.path,
-      port: options.port || defaultPort,
-      protocol: options.protocol || defaultSchemeString,
-      hostname: options.hostname,
-      query: options.query,
-      body: options.body,
-    });
-    // eslint-disable-next-line prefer-rest-params
-    return originalRequest.apply(options, arguments);
+function wrapFetch(originalFetch: typeof fetch): typeof fetch {
+  return (input, init) => {
+    if (typeof input !== 'string') {
+      throw new Error(`Unsupported non-string fetch input: ${JSON.stringify(input)}`);
+    }
+    interceptOptions.push({ input, init });
+    return originalFetch(input, init);
   };
-  // eslint-disable-next-line no-return-assign
-  return () => scheme.request = originalRequest;
 }
-const unwrapHttp = wrapRequest(http, 'http:', 80);
-const unwrapHttps = wrapRequest(https, 'https:', 443);
 
 // The configuration used for the interceptor
 const writeConfig: IWriteConfig = {
@@ -76,10 +61,7 @@ while (args._.length) {
 // Every request's options will be stored in interceptOptions
 const interceptOptions: IInterceptOptions[] = [];
 const queryExecutor: QueryExecutor = new QueryExecutor();
-queryExecutor.runQuery(query, dataSources).then(async(results: IQueryResult) => {
-  // Undo overwriting of http.request
-  unwrapHttp();
-  unwrapHttps();
+queryExecutor.runQuery(query, dataSources, wrapFetch(fetch)).then(async(results: IQueryResult) => {
   // Intercept and record all requests
   const interceptor: HttpInterceptor = new HttpInterceptor(writeConfig);
   for (const interceptOption of interceptOptions) {

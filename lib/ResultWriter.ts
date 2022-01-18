@@ -25,7 +25,7 @@ export class ResultWriter {
         this.getResultString(results),
         (err: any) => {
           if (err) {
-            throw new Error(`in writeResultsToFile: could not write TPF-query result to file: result.srj`);
+            reject(new Error(`in writeResultsToFile: could not write TPF-query result to file: result.srj`));
           }
           resolve();
         // Else: ok
@@ -55,7 +55,7 @@ export class ResultWriter {
   private getResultString(results: IQueryResult): string {
     switch (results.type) {
       case QueryType.SELECT:
-        return this.bindingsToSparqlJsonResult(<Bindings[]> results.value);
+        return this.bindingsToSparqlJsonResult(<Bindings[]> results.value, results.variables);
       case QueryType.ASK:
         return this.booleanToSparqlJsonResult(<boolean> results.value);
       case QueryType.CONSTRUCT:
@@ -83,12 +83,9 @@ export class ResultWriter {
    * Transform the bindings to the SPARQLJsonResult format used for testing
    * @param bindings The bindings returned from the query-engine
    */
-  private bindingsToSparqlJsonResult(bindings: Bindings[]): string {
+  private bindingsToSparqlJsonResult(bindings: Bindings[], variables: string[]): string {
     const head: any = {};
-    head.vars = [];
-    if (bindings.length > 0 && bindings[0].size) {
-      bindings[0].keySeq().forEach(key => head.vars.push(key.slice(1)));
-    }
+    head.vars = variables.map(key => key.slice(1));
 
     const results: any = {};
     results.bindings = [];

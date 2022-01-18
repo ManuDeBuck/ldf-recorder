@@ -1,10 +1,9 @@
 import * as crypto from 'crypto';
 import * as fs from 'fs';
-import type { ClientRequest, IncomingMessage } from 'http';
-import * as http from 'http';
-import * as https from 'https';
 import * as Path from 'path';
+import type { Readable } from 'stream';
 import type { IInterceptOptions, IMockedFile, IWriteConfig } from './IRecorder';
+const stringifyStream = require('stream-to-string');
 
 /**
  * A class for intercepting and recording the HTTP-response body of a TPF-request
@@ -21,45 +20,31 @@ export class HttpInterceptor {
    * @param interceptOptions
    */
   public async interceptResponse(interceptOptions: IInterceptOptions): Promise<void> {
-    return new Promise(async(resolve, reject) => {
-      const res: ClientRequest = (interceptOptions.protocol === 'http:' ? http : https).request(interceptOptions);
-      let body = '';
-      res.on('error', reject);
-      res.on('response', (incoming: IncomingMessage) => {
-        incoming.setEncoding('utf8');
-        const headers = incoming.headers;
-        incoming.on('error', reject);
-        incoming.on('data', (chunk: any) => {
-          if (typeof chunk !== 'string') {
-            throw new Error(`Chunk must be of type string, not of type: ${typeof chunk}`);
-          }
-          body += chunk;
-        });
-        incoming.on('end', async() => {
-          // Decode to get the pure URI
-          let requestIRI = `${interceptOptions.protocol}//${interceptOptions.hostname}${interceptOptions.path}`;
-          if (interceptOptions.method === 'POST') {
-            requestIRI += `@@POST:${interceptOptions.body.toString()}`;
-          }
-          const filename = crypto.createHash('sha1')
-            .update(decodeURIComponent(requestIRI))
-            .digest('hex');
-          const fileConfig: IMockedFile = {
-            body,
-            filename,
-            hashedIRI: requestIRI,
-            headers,
-            query: interceptOptions.query,
-          };
-          this.writeToFile(fileConfig);
-          resolve();
-        });
-      });
-      if (interceptOptions.method === 'POST') {
-        res.write(interceptOptions.body.toString());
-      }
-      res.end();
-    });
+    // Execute request
+    const response = await fetch(interceptOptions.input, interceptOptions.init);
+
+    // Determine request URL
+    let requestIRI = interceptOptions.input;
+    if (interceptOptions.init?.method === 'POST') {
+      // eslint-disable-next-line @typescript-eslint/no-base-to-string
+      requestIRI += `@@POST:${interceptOptions.init.body.toString()}`;
+    }
+
+    // Collect response body
+    const body = await stringifyStream(<Readable> <any> response.body);
+
+    // Save response to file
+    const filename = crypto.createHash('sha1')
+      .update(decodeURIComponent(requestIRI))
+      .digest('hex');
+    const fileConfig: IMockedFile = {
+      body,
+      filename,
+      hashedIRI: requestIRI,
+      headers: response.headers,
+      query: requestIRI.includes('?') ? requestIRI.slice(requestIRI.indexOf('?') + 1) : 'null',
+    };
+    this.writeToFile(fileConfig);
   }
 
   /**
@@ -85,7 +70,7 @@ export class HttpInterceptor {
   private getHeaderLines(config: IMockedFile): string {
     return `# Query: ${config.query}
 # Hashed IRI: ${config.hashedIRI}
-# Content-type: ${config.headers['content-type']}
+# Content-type: ${config.headers.get('content-type')}
 `;
   }
 }
