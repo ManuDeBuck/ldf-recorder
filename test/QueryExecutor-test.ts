@@ -30,7 +30,7 @@ describe('QueryExecutor', () => {
 
     it('should resolve ASK', () => {
       return expect(queryExecutor.runQuery(
-        'ASK { ?s ?p <http://dbpedia.org/resource/Belgium>. } LIMIT 5',
+        'ASK { ?s ?p <http://dbpedia.org/resource/Belgium>. }',
         ['TPF@http://fragments.dbpedia.org/2015/en'])).resolves.toBeTruthy();
     });
 
