@@ -1,19 +1,18 @@
 import * as crypto from 'crypto';
 import * as fs from 'fs';
-import { ClientRequest, IncomingMessage } from "http";
+import type { ClientRequest, IncomingMessage } from 'http';
 import * as http from 'http';
 import * as https from 'https';
 import * as Path from 'path';
-import { IInterceptOptions, IMockedFile, IWriteConfig } from './IRecorder';
+import type { IInterceptOptions, IMockedFile, IWriteConfig } from './IRecorder';
 
 /**
  * A class for intercepting and recording the HTTP-response body of a TPF-request
  */
 export class HttpInterceptor {
-
   private readonly writeConfig: IWriteConfig;
 
-  constructor(writeConfig: IWriteConfig) {
+  public constructor(writeConfig: IWriteConfig) {
     this.writeConfig = writeConfig;
   }
 
@@ -22,7 +21,7 @@ export class HttpInterceptor {
    * @param interceptOptions
    */
   public async interceptResponse(interceptOptions: IInterceptOptions): Promise<void> {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async(resolve, reject) => {
       const res: ClientRequest = (interceptOptions.protocol === 'http:' ? http : https).request(interceptOptions);
       let body = '';
       res.on('error', reject);
@@ -36,15 +35,15 @@ export class HttpInterceptor {
           }
           body += chunk;
         });
-        incoming.on('end', async () => {
+        incoming.on('end', async() => {
           // Decode to get the pure URI
-          let requestIRI = interceptOptions.protocol + '//' + interceptOptions.hostname + interceptOptions.path;
+          let requestIRI = `${interceptOptions.protocol}//${interceptOptions.hostname}${interceptOptions.path}`;
           if (interceptOptions.method === 'POST') {
-            requestIRI += '@@POST:' + interceptOptions.body.toString();
+            requestIRI += `@@POST:${interceptOptions.body.toString()}`;
           }
           const filename = crypto.createHash('sha1')
-                          .update(decodeURIComponent(requestIRI))
-                          .digest('hex');
+            .update(decodeURIComponent(requestIRI))
+            .digest('hex');
           const fileConfig: IMockedFile = {
             body,
             filename,
@@ -70,12 +69,13 @@ export class HttpInterceptor {
   private writeToFile(config: IMockedFile): void {
     config.body = this.getHeaderLines(config) + config.body;
     fs.writeFile(Path.join(this.writeConfig.directory, config.filename),
-    config.body, (err: any) => {
-      if (err) {
-        throw new Error(`in writeToFile: could not write TPF-query results to file: ${config.filename}`);
-      }
-      // else: ok
-    });
+      config.body,
+      (err: any) => {
+        if (err) {
+          throw new Error(`in writeToFile: could not write TPF-query results to file: ${config.filename}`);
+        }
+      // Else: ok
+      });
   }
 
   /**
@@ -85,8 +85,7 @@ export class HttpInterceptor {
   private getHeaderLines(config: IMockedFile): string {
     return `# Query: ${config.query}
 # Hashed IRI: ${config.hashedIRI}
-# Content-type: ${config.headers["content-type"]}
+# Content-type: ${config.headers['content-type']}
 `;
   }
-
 }

@@ -1,7 +1,7 @@
-import { Bindings } from '@comunica/bus-query-operation';
-import * as http from 'http';
-import { Quad } from 'rdf-js';
-import { QueryType } from './QueryExecutor';
+import type * as http from 'http';
+import type { Bindings } from '@comunica/bus-query-operation';
+import type { Quad } from 'rdf-js';
+import type { QueryType } from './QueryExecutor';
 
 /**
  * All the options necessary for intercepting and recording the response

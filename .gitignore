@@ -1,6 +1,7 @@
 node_modules
 .idea
 .vscode
+.eslintcache
 yarn-error.log
 **/lib/**/*.js
 **/lib/**/*.js.map

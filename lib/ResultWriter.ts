@@ -1,17 +1,17 @@
-import { ActorSparqlSerializeSparqlJson } from "@comunica/actor-sparql-serialize-sparql-json";
-import { Bindings } from "@comunica/bus-query-operation";
 import * as fs from 'fs';
-import { Quad, Writer } from "n3";
 import * as Path from 'path';
-import * as RDF from "rdf-js";
-import { IQueryResult, IWriteConfig } from "./IRecorder";
-import { QueryType } from "./QueryExecutor";
+import { ActorSparqlSerializeSparqlJson } from '@comunica/actor-sparql-serialize-sparql-json';
+import type { Bindings } from '@comunica/bus-query-operation';
+import type { Quad } from 'n3';
+import { Writer } from 'n3';
+import type * as RDF from 'rdf-js';
+import type { IQueryResult, IWriteConfig } from './IRecorder';
+import { QueryType } from './QueryExecutor';
 
 export class ResultWriter {
+  private readonly writeConfig: IWriteConfig;
 
-  private writeConfig: IWriteConfig;
-
-  constructor(writeConfig: IWriteConfig) {
+  public constructor(writeConfig: IWriteConfig) {
     this.writeConfig = writeConfig;
   }
 
@@ -22,12 +22,13 @@ export class ResultWriter {
   public writeResultsToFile(results: IQueryResult): Promise<void> {
     return new Promise((resolve, reject) => {
       fs.writeFile(Path.join(this.writeConfig.directory, `result${this.getResultExtension(results.type)}`),
-        this.getResultString(results), (err: any) => {
+        this.getResultString(results),
+        (err: any) => {
           if (err) {
             throw new Error(`in writeResultsToFile: could not write TPF-query result to file: result.srj`);
           }
           resolve();
-        // else: ok
+        // Else: ok
         });
     });
   }
@@ -36,14 +37,14 @@ export class ResultWriter {
    * Returns the extension of the result file, depening on the QueryType
    * @param type The type of the query
    */
-  private getResultExtension(type: QueryType) {
+  private getResultExtension(type: QueryType): string {
     switch (type) {
-    case QueryType.ASK:
-      return '.srj';
-    case QueryType.CONSTRUCT:
-      return '.ttl';
-    case QueryType.SELECT:
-      return '.srj';
+      case QueryType.ASK:
+        return '.srj';
+      case QueryType.CONSTRUCT:
+        return '.ttl';
+      case QueryType.SELECT:
+        return '.srj';
     }
   }
 
@@ -53,12 +54,12 @@ export class ResultWriter {
    */
   private getResultString(results: IQueryResult): string {
     switch (results.type) {
-    case QueryType.SELECT:
-      return this.bindingsToSparqlJsonResult(<Bindings[]> results.value);
-    case QueryType.ASK:
-      return this.booleanToSparqlJsonResult(<boolean> results.value);
-    case QueryType.CONSTRUCT:
-      return this.quadsToTurtle(<Quad[]> results.value);
+      case QueryType.SELECT:
+        return this.bindingsToSparqlJsonResult(<Bindings[]> results.value);
+      case QueryType.ASK:
+        return this.booleanToSparqlJsonResult(<boolean> results.value);
+      case QueryType.CONSTRUCT:
+        return this.quadsToTurtle(<Quad[]> results.value);
     }
   }
 
@@ -85,8 +86,8 @@ export class ResultWriter {
   private bindingsToSparqlJsonResult(bindings: Bindings[]): string {
     const head: any = {};
     head.vars = [];
-    if (bindings.length && bindings[0].size) {
-      bindings[0].keySeq().forEach((key) => head.vars.push(key.substr(1)));
+    if (bindings.length > 0 && bindings[0].size) {
+      bindings[0].keySeq().forEach(key => head.vars.push(key.slice(1)));
     }
 
     const results: any = {};
@@ -95,12 +96,12 @@ export class ResultWriter {
       const bres: any = {};
       binding.keySeq().forEach((key: string) => {
         const value: RDF.Term = binding.get(key);
-        bres[key.substr(1)] = ActorSparqlSerializeSparqlJson.bindingToJsonBindings(value);
+        bres[key.slice(1)] = ActorSparqlSerializeSparqlJson.bindingToJsonBindings(value);
       });
       results.bindings.push(bres);
     }
 
-    return JSON.stringify({head, results}, null, 1);
+    return JSON.stringify({ head, results }, null, 1);
   }
 
   /**
@@ -108,7 +109,6 @@ export class ResultWriter {
    * @param boolean The boolean returned from the query-engine
    */
   private booleanToSparqlJsonResult(ask: boolean): string {
-    return JSON.stringify({head: {}, boolean: ask});
+    return JSON.stringify({ head: {}, boolean: ask });
   }
-
 }
