@@ -33,18 +33,24 @@ describe('HttpInterceptor', () => {
 
       await interceptor.interceptResponse({
         input: 'http://ex.org/path/',
-      }).then(() => {
+      });
+      await new Promise((resolve, reject) => {
         fs.readdir(jestTestFolder, (error, files) => {
-          const filename: string = crypto.createHash('sha1')
-            .update(fn)
-            .digest('hex');
-          const fileContent: string = fs.readFileSync(Path.join(jestTestFolder, filename), 'utf8');
-          expect(fileContent.startsWith(`# Query: null
-# Hashed IRI: ${fn}
-# Content-type: ${ct}`)).toBeTruthy();
-          fse.removeSync(Path.join(jestTestFolder, filename));
+          if (error) {
+            reject(error);
+          } else {
+            resolve(files);
+          }
         });
       });
+      const filename: string = crypto.createHash('sha1')
+        .update(fn)
+        .digest('hex');
+      const fileContent: string = fs.readFileSync(Path.join(jestTestFolder, filename), 'utf8');
+      expect(fileContent.startsWith(`# Query: null
+# Hashed IRI: ${fn}
+# Content-type: ${ct}`)).toBeTruthy();
+      fse.removeSync(Path.join(jestTestFolder, filename));
     });
 
     it('should resolve', () => {
