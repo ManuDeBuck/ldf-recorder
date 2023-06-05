@@ -3,6 +3,8 @@ import * as fs from 'fs';
 import * as Path from 'path';
 import type { Readable } from 'stream';
 import type { IInterceptOptions, IMockedFile, IWriteConfig } from './IRecorder';
+
+// eslint-disable-next-line import/no-commonjs
 const stringifyStream = require('stream-to-string');
 
 /**

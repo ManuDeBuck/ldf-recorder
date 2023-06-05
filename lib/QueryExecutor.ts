@@ -1,18 +1,19 @@
 /* eslint-disable no-case-declarations */
-import { newEngine } from '@comunica/actor-init-sparql';
-import type { Bindings } from '@comunica/bus-query-operation';
-import type { Quad } from 'rdf-js';
+import { QueryEngine } from '@comunica/query-sparql';
+import type { IQueryBindingsEnhanced } from '@comunica/types';
+import type * as RDF from 'rdf-js';
 import type { IQueryResult, IQuerySource } from './IRecorder';
 
 /**
  * A class which executes SPARQL-queries on a TPF endpoint that can be recorded
  */
+// eslint-disable-next-line import/group-exports
 export class QueryExecutor {
-  public readonly myEngine: any;
+  public readonly myEngine: QueryEngine;
 
   public constructor(engine?: any) {
     // Use comunica engine by default.
-    this.myEngine = engine || newEngine();
+    this.myEngine = engine || new QueryEngine();
   }
 
   /**
@@ -29,28 +30,30 @@ export class QueryExecutor {
     return new Promise(async(resolve, reject) => {
       switch (queryType) {
         case QueryType.SELECT:
-          const rss: Bindings[] = [];
-          const rs = await this.myEngine.query(queryString, context);
-          await rs.bindingsStream.on('data', (data: Bindings) => {
+          const rss: RDF.Bindings[] = [];
+          const rs = <IQueryBindingsEnhanced> await this.myEngine.query(queryString, <any>context);
+          const metadata = await rs.metadata();
+          const bindingsStream = await rs.execute();
+          bindingsStream.on('data', (data: RDF.Bindings) => {
             rss.push(data);
           });
-          rs.bindingsStream.on('error', reject);
-          await rs.bindingsStream.on('end', async() => {
-            resolve({ type: QueryType.SELECT, value: rss, variables: rs.variables });
+          bindingsStream.on('error', reject);
+          bindingsStream.on('end', () => {
+            resolve({ type: QueryType.SELECT, value: rss, variables: metadata.variables.map(vr => vr.value) });
           });
           break;
         case QueryType.ASK:
-          const ra = await this.myEngine.query(queryString, context);
-          resolve({ type: QueryType.ASK, value: await ra.booleanResult });
+          const booleanResult = await this.myEngine.queryBoolean(queryString, <any>context);
+          resolve({ type: QueryType.ASK, value: booleanResult });
           break;
         case QueryType.CONSTRUCT:
-          const rsc: Quad[] = [];
-          const rc = await this.myEngine.query(queryString, context);
-          await rc.quadStream.on('data', (data: Quad) => {
+          const rsc: RDF.Quad[] = [];
+          const quadStream = await this.myEngine.queryQuads(queryString, <any>context);
+          quadStream.on('data', (data: RDF.Quad) => {
             rsc.push(data);
           });
-          rc.quadStream.on('error', reject);
-          await rc.quadStream.on('end', async() => {
+          quadStream.on('error', reject);
+          quadStream.on('end', async() => {
             resolve({ type: QueryType.CONSTRUCT, value: rsc });
           });
           break;
@@ -113,9 +116,10 @@ export class QueryExecutor {
 /**
  * The different QueryTypes the comunica engine and the recorder support
  */
-// eslint-disable-next-line no-shadow
+// eslint-disable-next-line import/group-exports
 export enum QueryType {
   ASK,
   SELECT,
   CONSTRUCT,
 }
+/* eslint-enable no-case-declarations */

@@ -6,7 +6,7 @@ import * as nock from 'nock';
 import fetch from 'node-fetch';
 import { HttpInterceptor } from '../lib/HttpInterceptor';
 
-global.fetch = fetch;
+globalThis.fetch = fetch;
 
 describe('HttpInterceptor', () => {
   beforeEach(() => {
@@ -34,15 +34,7 @@ describe('HttpInterceptor', () => {
       await interceptor.interceptResponse({
         input: 'http://ex.org/path/',
       });
-      await new Promise((resolve, reject) => {
-        fs.readdir(jestTestFolder, (error, files) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(files);
-          }
-        });
-      });
+      await new Promise(resolve => setTimeout(resolve, 100));
       const filename: string = crypto.createHash('sha1')
         .update(fn)
         .digest('hex');

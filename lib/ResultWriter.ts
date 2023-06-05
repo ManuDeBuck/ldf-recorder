@@ -1,7 +1,6 @@
 import * as fs from 'fs';
 import * as Path from 'path';
-import { ActorSparqlSerializeSparqlJson } from '@comunica/actor-sparql-serialize-sparql-json';
-import type { Bindings } from '@comunica/bus-query-operation';
+import { ActorQueryResultSerializeSparqlJson } from '@comunica/actor-query-result-serialize-sparql-json';
 import type { Quad } from 'n3';
 import { Writer } from 'n3';
 import type * as RDF from 'rdf-js';
@@ -55,7 +54,7 @@ export class ResultWriter {
   private getResultString(results: IQueryResult): string {
     switch (results.type) {
       case QueryType.SELECT:
-        return this.bindingsToSparqlJsonResult(<Bindings[]> results.value, results.variables);
+        return this.bindingsToSparqlJsonResult(<RDF.Bindings[]> results.value, results.variables);
       case QueryType.ASK:
         return this.booleanToSparqlJsonResult(<boolean> results.value);
       case QueryType.CONSTRUCT:
@@ -83,17 +82,16 @@ export class ResultWriter {
    * Transform the bindings to the SPARQLJsonResult format used for testing
    * @param bindings The bindings returned from the query-engine
    */
-  private bindingsToSparqlJsonResult(bindings: Bindings[], variables: string[]): string {
+  private bindingsToSparqlJsonResult(bindings: RDF.Bindings[], variables: string[]): string {
     const head: any = {};
-    head.vars = variables.map(key => key.slice(1));
+    head.vars = variables.map(key => key);
 
     const results: any = {};
     results.bindings = [];
     for (const binding of bindings) {
       const bres: any = {};
-      binding.keySeq().forEach((key: string) => {
-        const value: RDF.Term = binding.get(key);
-        bres[key.slice(1)] = ActorSparqlSerializeSparqlJson.bindingToJsonBindings(value);
+      binding.forEach((value: RDF.Term, key: RDF.Variable) => {
+        bres[key.value] = ActorQueryResultSerializeSparqlJson.bindingToJsonBindings(value);
       });
       results.bindings.push(bres);
     }

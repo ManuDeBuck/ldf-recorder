@@ -1,3 +1,5 @@
+require("@rushstack/eslint-patch/modern-module-resolution");
+
 module.exports = {
     root: true,
     parser: '@typescript-eslint/parser',
@@ -9,6 +11,8 @@ module.exports = {
         '@rubensworks'
     ],
     rules: {
-        'no-implicit-coercion': 'off'
+        'no-implicit-coercion': 'off',
+        'import/no-nodejs-modules': 'off',
+        'unicorn/filename-case': 'off',
     }
 };

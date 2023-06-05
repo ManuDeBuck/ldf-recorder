@@ -1,7 +1,5 @@
 import { QueryExecutor } from '../lib/QueryExecutor';
 
-jest.useFakeTimers();
-
 describe('QueryExecutor', () => {
   const queryExecutor: QueryExecutor = new QueryExecutor();
 
@@ -14,8 +12,8 @@ describe('QueryExecutor', () => {
   describe('#runQuery', () => {
     it('should resolve SELECT', () => {
       return expect(queryExecutor.runQuery(
-        'SELECT * WHERE { ?s ?p <http://dbpedia.org/resource/Belgium>. ?s ?p ?o } LIMIT 5',
-        [ 'TPF@http://fragments.dbpedia.org/2015/en' ],
+        'SELECT * WHERE { ?s ?p ?o } LIMIT 5',
+        [ 'TPF@https://fragments.dbpedia.org/2015/en' ],
         fetch,
       )).resolves.toBeTruthy();
     });

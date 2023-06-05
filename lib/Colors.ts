@@ -1,3 +1,4 @@
+/* eslint-disable import/group-exports */
 export const RESET = '\u001B[0m';
 export const RED = '\u001B[31m';
 export const GREEN = '\u001B[32m';
@@ -14,3 +15,5 @@ export const CYAN = '\u001B[36m';
 export function inColor(element: string, color: string): string {
   return `${color}${element}${RESET}`;
 }
+
+/* eslint-enable import/group-exports */

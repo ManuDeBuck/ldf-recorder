@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-/* eslint-disable no-sync,unicorn/filename-case */
 import * as fs from 'fs';
 import * as Path from 'path';
 import minimist = require('minimist');
@@ -45,7 +44,9 @@ const writeConfig: IWriteConfig = {
 };
 
 // Check if directory exists
+// eslint-disable-next-line no-sync
 if (!fs.existsSync(writeConfig.directory)) {
+  // eslint-disable-next-line no-sync
   fs.mkdirSync(writeConfig.directory);
 }
 
@@ -54,7 +55,7 @@ const query: string = args._.pop();
 
 // Fetch the data sources given
 const dataSources: string[] = [];
-while (args._.length) {
+while (args._.length > 0) {
   dataSources.push(args._.pop());
 }
 

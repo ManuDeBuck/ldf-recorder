@@ -1,5 +1,5 @@
-import type { Bindings } from '@comunica/bus-query-operation';
-import type { Quad } from 'rdf-js';
+/* eslint-disable import/group-exports */
+import type * as RDF from 'rdf-js';
 import type { QueryType } from './QueryExecutor';
 
 /**
@@ -42,6 +42,8 @@ export interface IQuerySource {
  */
 export interface IQueryResult {
   type: QueryType;
-  value: Bindings[] | boolean | Quad[];
+  value: RDF.Bindings[] | boolean | RDF.Quad[];
   variables?: string[];
 }
+
+/* eslint-enable import/group-exports */
