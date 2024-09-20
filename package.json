@@ -6,6 +6,10 @@
   "repository": "https://github.com/comunica/ldf-recorder.git",
   "author": "Manu De Buck <manu.debuck@mdebuck.org>",
   "license": "MIT",
+  "funding": {
+    "type": "opencollective",
+    "url": "https://opencollective.com/comunica-association"
+  },
   "bugs": {
     "url": "https://github.com/comunica/ldf-recorder/issues"
   },
