@@ -67,14 +67,10 @@ describe('HttpInterceptor', () => {
     });
 
     afterAll(() => {
-      const filenamettl: string = crypto.createHash('sha1')
+      const filename: string = crypto.createHash('sha1')
         .update(fn)
         .digest('hex');
-      const filenametrig: string = crypto.createHash('sha1')
-        .update(fn)
-        .digest('hex');
-      fse.removeSync(Path.join(jestTestFolder, filenametrig));
-      fse.removeSync(Path.join(jestTestFolder, filenamettl));
+      fse.removeSync(Path.join(jestTestFolder, filename));
     });
   });
 });
