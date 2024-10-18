@@ -1,7 +1,7 @@
 import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as Path from 'path';
-import type { Readable } from 'stream';
+import { Readable } from 'stream';
 import type { IInterceptOptions, IMockedFile, IWriteConfig } from './IRecorder';
 
 // eslint-disable-next-line import/no-commonjs
@@ -33,7 +33,7 @@ export class HttpInterceptor {
     }
 
     // Collect response body
-    const body = await stringifyStream(<Readable> <any> response.body);
+    const body = await stringifyStream(Readable.fromWeb(<any> response.body));
 
     // Save response to file
     const filename = crypto.createHash('sha1')

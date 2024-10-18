@@ -3,10 +3,7 @@ import * as fs from 'fs';
 import * as Path from 'path';
 import * as fse from 'fs-extra';
 import * as nock from 'nock';
-import fetch from 'node-fetch';
 import { HttpInterceptor } from '../lib/HttpInterceptor';
-
-globalThis.fetch = fetch;
 
 describe('HttpInterceptor', () => {
   beforeEach(() => {
